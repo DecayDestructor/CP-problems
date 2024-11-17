@@ -32,6 +32,10 @@ void outputArray(vector<T> &arr, int n)
         cout << arr[i] << nl;
     }
 }
+bool RSORT(ll a, ll b)
+{
+    return a > b;
+}
 template <typename T>
 vector<T> factorization(int n)
 {
@@ -92,6 +96,50 @@ ll binpow(ll a, ll b, ll m)
 }
 void solve()
 {
+    ll m, n, k;
+    cin >> m >> n >> k;
+    vll books(m);
+    set<ll> stt;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> books[i];
+    }
+    sort(books.begin(), books.end());
+    for (int i = 0; i < m; i++)
+    {
+        stt.insert(i);
+    }
+    ll counter = 0;
+    vll people(n);
+    for (int i = 0; i < n; i++)
+    {
+        cin >> people[i];
+    }
+    for (int i = 0; i < n; i++)
+    {
+        ll left = 0;
+        ll right = m - 1;
+        while (left <= right)
+        {
+            ll middle = left + (right - left) / 2;
+            if ((books[middle] >= people[i] - k && books[middle] <= people[i] + k) && stt.count(middle))
+            {
+                // cout << i << nl;
+                stt.erase(middle);
+                counter++;
+                break;
+            }
+            else if (books[middle] < people[i] - k)
+            {
+                left = middle + 1;
+            }
+            else
+            {
+                right = middle - 1;
+            }
+        }
+    }
+    cout << counter << nl;
 }
 int main()
 {
@@ -99,7 +147,7 @@ int main()
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--)
     {
         solve();

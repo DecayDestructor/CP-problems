@@ -32,6 +32,12 @@ void outputArray(vector<T> &arr, int n)
         cout << arr[i] << nl;
     }
 }
+
+bool RSORT(ll a, ll b)
+{
+    return a > b;
+}
+
 template <typename T>
 vector<T> factorization(int n)
 {
@@ -92,6 +98,43 @@ ll binpow(ll a, ll b, ll m)
 }
 void solve()
 {
+    ll n, x;
+    cin >> n >> x;
+    vll diff(x);
+    vll sections(x);
+    for (int i = 0; i < x; i++)
+    {
+        cin >> diff[i];
+    }
+    sort(diff.begin(), diff.end());
+    for (int i = 0; i + 1 < x; i++)
+    {
+        sections[i] = diff[i + 1] - diff[i] - 1;
+    }
+    sections[x - 1] = (n - diff[x - 1]) + (diff[0] - 1);
+    // cout << sections[x - 1] << nl;
+    sort(sections.begin(), sections.end(), RSORT);
+    ll time = 0;
+    ll answer = 0;
+    for (int i = 0; i < x && sections[i] > 2 * time; i++)
+    {
+        ll infected = 2 * time;
+        if (sections[i] - infected == 1)
+        {
+            answer++;
+            // cout << "one " << answer << nl;
+            time += 2;
+            continue;
+        }
+        // cout << sections[i] - infected << nl;
+        answer += (sections[i] - infected - 1);
+        // cout << "not one " << answer << nl;
+        time++;
+        time++;
+    }
+    // cout << answer << nl;
+    cout << n - answer << nl;
+    return;
 }
 int main()
 {

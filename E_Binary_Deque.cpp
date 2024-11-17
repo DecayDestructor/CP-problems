@@ -2,14 +2,16 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(n) for (int i = 0; i < n; i++)
-#define py cout << "YES" << nl
-#define pn cout << "NO" << nl
+#define loop(n) for (ll i = 0; i < n; i++)
+#define py cout << "YES"
+#define pn cout << "NO"
 #define print(ans) cout << ans << nl
 #define isEven(n) if (n % 2 == 0)
 #define ll long long
 #define vll vector<ll>
 #define vi vector<int>
+#define vvll vector<vector<ll>>
+#define vvch vector<vector<char>>
 #define vch vector<char>
 template <typename T1, typename T2>
 using vpp = vector<pair<T1, T2>>;
@@ -31,6 +33,10 @@ void outputArray(vector<T> &arr, int n)
     {
         cout << arr[i] << nl;
     }
+}
+bool RSORT(ll a, ll b)
+{
+    return a > b;
 }
 template <typename T>
 vector<T> factorization(int n)
@@ -74,7 +80,7 @@ ll sumOfNaturalNumbers(ll n)
 // DFS Traversal Validation
 bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited)
 {
-    return row < m && col < n && row >= 0 && col >= 0 && !visited[row][col];
+    return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
 ll binpow(ll a, ll b, ll m)
@@ -92,6 +98,49 @@ ll binpow(ll a, ll b, ll m)
 }
 void solve()
 {
+    ll n, s;
+    cin >> n >> s;
+    vll arr(n);
+    vll prefix(n + 1, 0);
+    ll sum = 0;
+    loop(n)
+    {
+        cin >> arr[i];
+        // prefix[i + 1] = prefix[i] + arr[i];
+        sum += arr[i];
+    }
+    ll left = 0;
+    ll right = 0;
+    ll maxi = -1;
+    ll answer = 0;
+    while (right < n && left < n)
+    {
+        while (right < n && answer < s)
+        {
+            if (arr[right])
+            {
+                answer++;
+            }
+            if (answer >= s)
+            {
+                break;
+            }
+            right++;
+        }
+        right++;
+        while (right < n && !arr[right])
+            right++;
+        maxi = max(maxi, right - left);
+        // cout << left << " : " << right << nl;
+        while (left < n && arr[left] != 1)
+        {
+            left++;
+        }
+        answer--;
+        left++;
+        // right++;
+    }
+    cout << (maxi == -1 ? maxi : n - maxi) << nl;
 }
 int main()
 {
