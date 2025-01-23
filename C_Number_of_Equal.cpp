@@ -1,99 +1,85 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define fast                 \
+    ios::sync_with_stdio(0); \
+    cin.tie(0);              \
+    cout.tie(0);
+#define F first
+#define FOR(i, n) for (int i = 0; i < (int)n; i++)
+#define cin(v, n)                    \
+    for (int i = 0; i < (int)n; i++) \
+        cin >> v[i];
+#define cout(v, n)                   \
+    for (int i = 0; i < (int)n; i++) \
+        cout << v[i] << (i == n - 1 ? "\n" : " ");
+#define WL(t) while (t--)
+#define S second
+#define PB push_back
+#define all(x) x.begin(), x.end()
+#define sortall(x) sort(all(x))
+#define runtime() cerr << ((double)clock() / CLOCKS_PER_SEC) << endl;
+#define MP make_pair
+#define llu unsigned long long
+#define ret return
+#define endl "\n"
+typedef long long ll;
+typedef long double ld;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pl;
+typedef vector<int> vi;
+typedef vector<ll> vl;
+typedef vector<pii> vpii;
+typedef vector<pl> vpl;
+typedef vector<vi> vvi;
+typedef vector<vl> vvl;
+const ll mod = 1e9 + 7, N = 2e6 + 7, M = 2e6 + 7, INF = INT_MAX / 10;
+ll powe(ll x, ll y) {
+    x = x % mod, y = y % (mod - 1);
+    ll ans = 1;
+    while (y > 0) {
+        if (y & 1) {
+            ans = (1ll * x * ans) % mod;
+        }
+        y >>= 1;
+        x = (1ll * x * x) % mod;
+    }
+    return ans;
+}
 
-#define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
-#define py cout << "YES" << nl
-#define pn cout << "NO" << nl
-#define print(ans) cout << ans << nl
-#define isEven(n) if (n % 2 == 0)
-#define ll long long
-#define vll vector<ll>
-#define vi vector<int>
-#define vvll vector<vector<ll>>
-#define vvch vector<vector<char>>
-#define vch vector<char>
-template <typename T1, typename T2>
-using vpp = vector<pair<T1, T2>>;
-ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
-bool RSORT(ll a, ll b) {
-    return a > b;
-}
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
-    for (int i = 1; i * i <= n; i++) {
-        if (n % i == 0) {
-            factors.push_back(i);
-            if (i * i != n) {
-                factors.push_back(n / i);
-            }
-        }
-    }
-    return factors;
-}
-// Prime Factorization
-void primeFactorisation(ll n, map<ll, ll> &mpp) {
-    for (ll i = 2; i <= sqrt(n); i++) {
-        while (n % i == 0) {
-            mpp[i]++;
-            n = n / i;
-        }
-    }
-    if (n != 1)
-        mpp[n]++;
-}
-// Sieve of Eratosthenes
-vector<ll> sieveOfEratosthenes(int n) {
-    vector<ll> sieve(n + 1, 1);
-    sieve[0] = sieve[1] = 0;  // 0 and 1 are not primes
-    for (int i = 2; i * i <= n; i++) {
-        if (sieve[i]) {
-            for (int j = i * i; j <= n; j += i) {
-                sieve[j] = 0;  // Mark multiples of i as non-prime
-            }
-        }
-    }
-    return sieve;  // Return the sieve vector
-}
-// Sum of first n natural numbers
-ll sumOfNaturalNumbers(ll n) {
-    return (n * (n + 1)) / 2;  // Formula to calculate the sum
-}
-// DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
-    return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
-}
-// Binary Exponentiation
-ll binpow(ll a, ll b, ll m) {
-    a %= m;
-    ll res = 1;
-    while (b > 0) {
-        if (b & 1) res = res * a % m;
-        a = a * a % m;
-        b >>= 1;
-    }
-    return res;
-}
 void solve() {
-    ll a, b;
-    cin >> a >> b;
-    vll arr(a), brr(b);
-    for (auto &it : arr)
-        cin >> it;
-
-    for (auto &it : brr)
-        cin >> it;
-    
+    ll n, m, j = 0, c = 0;
+    cin >> n >> m;
+    vl v(n), v2(m);
+    FOR(i, n)
+    cin >> v[i];
+    FOR(i, m)
+    cin >> v2[i];
+    for (ll i = 0; i < n && j < m;) {
+        if (v[i] == v2[j]) {
+            ll x = 1, x2 = 0;
+            if (v[i] == v[i + 1]) {
+                while (i < n - 1 && v[i] == v[i + 1])
+                    i++, x++;
+            }
+            while (j < m && v2[j] == v[i])
+                j++, x2++;
+            c += (x2 * x);
+            i++;
+        } else if (v[i] > v2[j])
+            j++;
+        else
+            i++;
+    }
+    cout << c << endl;
 }
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+
+signed main() {
+    fast;
     int t = 1;
     // cin >> t;
-    while (t--) {
+    WL(t) {
         solve();
     }
+    // runtime();
     return 0;
 }
