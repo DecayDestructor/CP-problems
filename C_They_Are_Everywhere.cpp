@@ -86,14 +86,8 @@ void solve() {
         stt.insert(s[i]);
     }
     ll k = stt.size();
-    // cout << k << nl;
     ll left = 0, right = 0;
     ll ans = (ll)1e10;
-    // for (auto &it : arr) {
-    //     cout << it << " ";
-    // }
-    // cout << nl;
-    // cout << k << nl;
     while (right < n) {
         while (right < n && mpp.size() < k) {
             mpp[s[right++]]++;
@@ -113,7 +107,6 @@ int main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
     while (t--) {
         solve();
     }
