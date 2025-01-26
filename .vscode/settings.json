@@ -5,6 +5,8 @@
     "bitset": "cpp",
     "chrono": "cpp",
     "algorithm": "cpp",
-    "*.tcc": "cpp"
+    "*.tcc": "cpp",
+    "initializer_list": "cpp",
+    "valarray": "cpp"
   }
 }
