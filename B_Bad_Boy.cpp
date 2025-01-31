@@ -77,35 +77,9 @@ ll binpow(ll a, ll b, ll m) {
     return res;
 }
 void solve() {
-    ll n;
-    cin >> n;
-    string s;
-    cin >> s;
-    ll foundP = 0;
-    ll foundS = 0;
-    ll Sindex = -1, Pindex = -1;
-    // cout << s << nl;
-    for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch == 's' && foundP) {
-            pn;
-            return;
-        } else if (ch == 'p') {
-            foundP++;
-            Pindex = min(i, Pindex);
-        } else if (ch == 's') {
-            foundS++;
-            Sindex = max(i, Sindex);
-        }
-    }
-    if (foundP == 0 || foundS == 0) {
-        py;
-        return;
-    } else {
-        if ((foundS && s[0] != 's'))
-    }
-    py;
-    return;
+    ll n, m, i, j;
+    cin >> n >> m >> i >> j;
+    cout << 1 << " " << 1 << " " << n << " " << m << "\n";
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -113,25 +87,8 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
-
-    // if (t == 9) {
-    //     py;
-    //     pn;
-    //     py;
-    //     py;
-    //     pn;
-    //     pn;
-    //     py;
-    //     pn;
-    //     py;
-    // }
-    // for (int i = 0; i < t; i++) {
-    //     ll n;
-    //     string s;
-    //     cin >> n >> s;
-    //     if (i == 56) {
-    //         cout << s << nl << s << nl;
-    //     }
-    // }
+    while (t--) {
+        solve();
+    }
     return 0;
 }

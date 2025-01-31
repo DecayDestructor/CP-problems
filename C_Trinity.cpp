@@ -15,6 +15,7 @@ using namespace std;
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
+#define all(a) a.begin(), a.end()
 using vpp = vector<pair<T1, T2>>;
 ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
@@ -77,35 +78,24 @@ ll binpow(ll a, ll b, ll m) {
     return res;
 }
 void solve() {
-    ll n;
+    int n;
     cin >> n;
-    string s;
-    cin >> s;
-    ll foundP = 0;
-    ll foundS = 0;
-    ll Sindex = -1, Pindex = -1;
-    // cout << s << nl;
+    vector<int> a(n);
     for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch == 's' && foundP) {
-            pn;
-            return;
-        } else if (ch == 'p') {
-            foundP++;
-            Pindex = min(i, Pindex);
-        } else if (ch == 's') {
-            foundS++;
-            Sindex = max(i, Sindex);
-        }
+        cin >> a[i];
     }
-    if (foundP == 0 || foundS == 0) {
-        py;
-        return;
-    } else {
-        if ((foundS && s[0] != 's'))
+    sort(all(a));
+    // for (auto &it : a) {
+    //     cout << it << " ";
+    // }
+    // cout << nl;
+    int ans = n - 2;
+    for (int i = 1; i < n - 1; i++) {
+        int x = a[i - 1], y = a[i];
+        int idx = lower_bound(all(a), x + y) - a.begin();
+        ans = min(ans, n - idx + i - 1);
     }
-    py;
-    return;
+    cout << ans << endl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -113,25 +103,8 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
-
-    // if (t == 9) {
-    //     py;
-    //     pn;
-    //     py;
-    //     py;
-    //     pn;
-    //     pn;
-    //     py;
-    //     pn;
-    //     py;
-    // }
-    // for (int i = 0; i < t; i++) {
-    //     ll n;
-    //     string s;
-    //     cin >> n >> s;
-    //     if (i == 56) {
-    //         cout << s << nl << s << nl;
-    //     }
-    // }
+    while (t--) {
+        solve();
+    }
     return 0;
 }

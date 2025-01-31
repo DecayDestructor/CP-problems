@@ -3,6 +3,7 @@ using namespace std;
 
 #define nl '\n'
 #define loop(s, n) for (ll i = s; i < n; i++)
+#define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
 #define print(ans) cout << ans << nl
@@ -79,59 +80,24 @@ ll binpow(ll a, ll b, ll m) {
 void solve() {
     ll n;
     cin >> n;
-    string s;
-    cin >> s;
-    ll foundP = 0;
-    ll foundS = 0;
-    ll Sindex = -1, Pindex = -1;
-    // cout << s << nl;
+    ll counter = 0;
+    setprecision(1);
     for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch == 's' && foundP) {
-            pn;
-            return;
-        } else if (ch == 'p') {
-            foundP++;
-            Pindex = min(i, Pindex);
-        } else if (ch == 's') {
-            foundS++;
-            Sindex = max(i, Sindex);
-        }
+        double a, b;
+        cin >> a >> b;
+        cout << a / b << nl;
+        if (a / b >= 1.6 && a / b <= 1.7) counter++;
     }
-    if (foundP == 0 || foundS == 0) {
-        py;
-        return;
-    } else {
-        if ((foundS && s[0] != 's'))
-    }
-    py;
-    return;
+    cout << counter << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
-
-    // if (t == 9) {
-    //     py;
-    //     pn;
-    //     py;
-    //     py;
-    //     pn;
-    //     pn;
-    //     py;
-    //     pn;
-    //     py;
-    // }
-    // for (int i = 0; i < t; i++) {
-    //     ll n;
-    //     string s;
-    //     cin >> n >> s;
-    //     if (i == 56) {
-    //         cout << s << nl << s << nl;
-    //     }
-    // }
+    // cin >> t;
+    while (t--) {
+        solve();
+    }
     return 0;
 }

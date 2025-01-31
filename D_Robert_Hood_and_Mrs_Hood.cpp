@@ -3,6 +3,7 @@ using namespace std;
 
 #define nl '\n'
 #define loop(s, n) for (ll i = s; i < n; i++)
+#define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
 #define print(ans) cout << ans << nl
@@ -77,35 +78,50 @@ ll binpow(ll a, ll b, ll m) {
     return res;
 }
 void solve() {
-    ll n;
-    cin >> n;
-    string s;
-    cin >> s;
-    ll foundP = 0;
-    ll foundS = 0;
-    ll Sindex = -1, Pindex = -1;
-    // cout << s << nl;
-    for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch == 's' && foundP) {
-            pn;
-            return;
-        } else if (ch == 'p') {
-            foundP++;
-            Pindex = min(i, Pindex);
-        } else if (ch == 's') {
-            foundS++;
-            Sindex = max(i, Sindex);
+    int n, d, k;
+    cin >> n >> d >> k;
+    vll start(n + 1, 0);
+    vll end(n + 1, 0);
+    for (int i = 1; i <= k; i++) {
+        ll a, b;
+        cin >> a >> b;
+        start[a]++;
+        end[b]++;
+    }
+    // for (ll i = 1; i <= n; i++) {
+    //     cout << start[i] << " ";
+    // }
+    // cout << nl;
+    // for (ll i = 1; i <= n; i++) {
+    //     cout << end[i] << " ";
+    // }
+    // cout << nl;
+    for (ll i = 1; i <= n; i++) {
+        start[i] += start[i - 1];
+        end[i] += end[i - 1];
+    }
+    // for (auto &it : start) {
+    //     cout << it << " ";
+    // }
+    // cout << nl;
+    // for (auto &it : end) {
+    //     cout << it << " ";
+    // }
+    // cout << nl;
+    ll days1 = -1, days2 = 1e9;
+    ll ans1, ans2;
+    ans1 = 1e9, ans2 = 1e9;
+    for (int i = d; i <= n; i++) {
+        if (start[i] - end[i - d] > days1) {
+            days1 = start[i] - end[i - d];
+            ans1 = i - d + 1;
+        }
+        if (start[i] - end[i - d] < days2) {
+            days2 = start[i] - end[i - d];
+            ans2 = i - d + 1;
         }
     }
-    if (foundP == 0 || foundS == 0) {
-        py;
-        return;
-    } else {
-        if ((foundS && s[0] != 's'))
-    }
-    py;
-    return;
+    cout << ans1 << " " << ans2 << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -113,25 +129,8 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
-
-    // if (t == 9) {
-    //     py;
-    //     pn;
-    //     py;
-    //     py;
-    //     pn;
-    //     pn;
-    //     py;
-    //     pn;
-    //     py;
-    // }
-    // for (int i = 0; i < t; i++) {
-    //     ll n;
-    //     string s;
-    //     cin >> n >> s;
-    //     if (i == 56) {
-    //         cout << s << nl << s << nl;
-    //     }
-    // }
+    while (t--) {
+        solve();
+    }
     return 0;
 }

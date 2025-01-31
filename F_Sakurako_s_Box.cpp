@@ -3,6 +3,7 @@ using namespace std;
 
 #define nl '\n'
 #define loop(s, n) for (ll i = s; i < n; i++)
+#define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
 #define print(ans) cout << ans << nl
@@ -77,34 +78,23 @@ ll binpow(ll a, ll b, ll m) {
     return res;
 }
 void solve() {
-    ll n;
+    int n;
     cin >> n;
-    string s;
-    cin >> s;
-    ll foundP = 0;
-    ll foundS = 0;
-    ll Sindex = -1, Pindex = -1;
-    // cout << s << nl;
+    ll MOD = (ll)1e9 + 7;
+    vll arr(n);
+    vll prefix(n + 1, 0);
     for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch == 's' && foundP) {
-            pn;
-            return;
-        } else if (ch == 'p') {
-            foundP++;
-            Pindex = min(i, Pindex);
-        } else if (ch == 's') {
-            foundS++;
-            Sindex = max(i, Sindex);
-        }
+        cin >> arr[i];
+        prefix[i + 1] = prefix[i] + arr[i];
     }
-    if (foundP == 0 || foundS == 0) {
-        py;
-        return;
-    } else {
-        if ((foundS && s[0] != 's'))
+    ll den = binpow((1LL * n * (n - 1)) / 2, MOD - 2, MOD);
+    ll sum = 0;
+    for (ll i = 0; i < n; i++) {
+        sum += ((arr[i] % MOD) * (prefix[i] % MOD)) % MOD;
+        // cout << arr[i] << " : " << prefix[i] << nl;
     }
-    py;
+    ll ans = ((sum % MOD) * (den % MOD)) % MOD;
+    cout << ans << nl;
     return;
 }
 signed main() {
@@ -113,25 +103,8 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
-
-    // if (t == 9) {
-    //     py;
-    //     pn;
-    //     py;
-    //     py;
-    //     pn;
-    //     pn;
-    //     py;
-    //     pn;
-    //     py;
-    // }
-    // for (int i = 0; i < t; i++) {
-    //     ll n;
-    //     string s;
-    //     cin >> n >> s;
-    //     if (i == 56) {
-    //         cout << s << nl << s << nl;
-    //     }
-    // }
+    while (t--) {
+        solve();
+    }
     return 0;
 }
