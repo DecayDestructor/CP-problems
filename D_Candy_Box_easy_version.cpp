@@ -80,20 +80,39 @@ ll binpow(ll a, ll b, ll m) {
 void solve() {
     int n;
     cin >> n;
-    vpp<ll, ll> arr(n);
-    for (auto &it : arr) {
-        cin >> it.second >> it.first;
+    vector<int> mpp((int)2e5 + 1, 0);
+    for (int i = 0; i < n; i++) {
+        int a;
+        cin >> a;
+        mpp[a]++;
     }
-    int a = 1;
-    sort(all(arr));
-    pair<int, int> prev = {-1, -1};
+    vector<int> freq((int)2e5 + 1, 0);
+    for (int i = 0; i <= 2e5 + 1; i++) {
+        freq[mpp[i]]++;
+    }
+    int remaining = 0;
+    int answer = 0;
+    for (int i = 2e5 + 1; i >= 0; i--) {
+        if (freq[i]) {
+            answer += i;
+            remaining += max(freq[i] - 1, (int)0);
+        } else {
+            if (remaining) {
+                answer += i;
+                remaining--;
+            }
+        }
+    }
+    // cout << (1LL * answer * (answer - 1)) / 2 << nl;
+    cout << answer << nl;
 }
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

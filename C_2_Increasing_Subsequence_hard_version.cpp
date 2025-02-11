@@ -80,13 +80,61 @@ ll binpow(ll a, ll b, ll m) {
 void solve() {
     int n;
     cin >> n;
-    vpp<ll, ll> arr(n);
-    for (auto &it : arr) {
-        cin >> it.second >> it.first;
+    vll arr(n);
+    for (auto &it : arr)
+        cin >> it;
+    string s = "";
+    int left = 0, right = n - 1;
+    int prev = 0;
+    while (left <= right) {
+        if (arr[left] < arr[right]) {
+            if (arr[left] > prev) {
+                prev = arr[left];
+                s += "L";
+                left++;
+
+            } else if (arr[right] > prev) {
+                prev = arr[right];
+                s += "R";
+                right--;
+            } else
+                break;
+        } else if (arr[right] < arr[left]) {
+            if (arr[right] > prev) {
+                prev = arr[right];
+                s += "R";
+                right--;
+
+            } else if (arr[left] > prev) {
+                prev = arr[left];
+                left++;
+                s += "L";
+            } else
+                break;
+        } else {
+            int c1 = 0, c2 = 0;
+            if (arr[left] <= prev) break;
+            int left1 = left, right1 = right;
+            while (left1 < right && arr[left1 + 1] > arr[left1]) {
+                c1++;
+                left1++;
+            }
+            while (right1 > left && arr[right1 - 1] > arr[right1]) {
+                right1--;
+                c2++;
+            }
+            if (c1 > c2) {
+                prev = arr[left];
+                left++;
+                s += "L";
+            } else {
+                prev = arr[right];
+                right--;
+                s += "R";
+            }
+        }
     }
-    int a = 1;
-    sort(all(arr));
-    pair<int, int> prev = {-1, -1};
+    cout << s.length() << nl << s << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

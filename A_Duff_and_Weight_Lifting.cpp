@@ -77,16 +77,22 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
+vll freq((int)2e6 + 110, 0);
 void solve() {
     int n;
     cin >> n;
-    vpp<ll, ll> arr(n);
-    for (auto &it : arr) {
-        cin >> it.second >> it.first;
+    for (int i = 0; i < n; i++) {
+        ll a;
+        cin >> a;
+        freq[a]++;
     }
-    int a = 1;
-    sort(all(arr));
-    pair<int, int> prev = {-1, -1};
+    int answer = 0;
+    for (int i = 0; i + 1 <= (int)2e6 + 100; i++) {
+        freq[i + 1] += freq[i] / 2;
+        freq[i] &= 1;
+        answer += freq[i];
+    }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

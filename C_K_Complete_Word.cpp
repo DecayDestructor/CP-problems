@@ -78,22 +78,56 @@ ll binpow(ll a, ll b, ll m) {
     return res;
 }
 void solve() {
-    int n;
-    cin >> n;
-    vpp<ll, ll> arr(n);
-    for (auto &it : arr) {
-        cin >> it.second >> it.first;
+    int n, k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
+    vector<string> temp(k, "");
+    for (int i = 0; i < n; i++) {
+        // cout << s[i] << nl;
+        temp[i % k] += (s[i]);
     }
-    int a = 1;
-    sort(all(arr));
-    pair<int, int> prev = {-1, -1};
+    int answer = 0;
+    int left = 0, right = k - 1;
+    for (int i = 0; i < k / 2; i++) {
+        vector<int> alpha(26, 0);
+        for (char &ch : temp[left]) {
+            alpha[ch - 'a']++;
+        }
+        for (char &ch : temp[right]) {
+            alpha[ch - 'a']++;
+        }
+        int maxi = -1;
+        for (auto &it : alpha) {
+            maxi = max(maxi, it);
+        }
+        // cout << temp[left] << " : " << temp[right] << " : " << (2 * n / k) - maxi << nl;
+        answer += ((2 * n / k) - maxi);
+        left++;
+        right--;
+    }
+    if (left == right) {
+        vector<int> alpha(26, 0);
+        for (char &ch : temp[left]) {
+            alpha[ch - 'a']++;
+        }
+        int maxi = -1;
+        for (auto &it : alpha) {
+            maxi = max(maxi, it);
+        }
+        // cout << temp[left] << " : " << temp[right] << " : " << (n / k) - maxi << nl;
+        answer += ((n / k) - maxi);
+        left++;
+        right--;
+    }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }
