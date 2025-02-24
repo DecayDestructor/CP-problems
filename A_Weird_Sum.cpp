@@ -78,16 +78,60 @@ ll binpow(ll a, ll b, ll m) {
     return res;
 }
 void solve() {
+    int n, m;
+    cin >> n >> m;
+    vvll arr(n, vll(m));
+    for (auto &it : arr) {
+        for (auto &jt : it) {
+            cin >> jt;
+        }
+    }
+    map<int, vector<int>> row;
+    map<int, vector<int>> col;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            row[arr[i][j]].push_back(i);
+        }
+    }
+    for (int j = 0; j < m; j++) {
+        for (int i = 0; i < n; i++) {
+            col[arr[i][j]].push_back(j);
+        }
+    }
+    int answer = 0;
+    for (auto &it : row) {
+        vi temp;
+        temp.push_back(0);
+        for (int i = 0; i + 1 < it.second.size(); i++) {
+            temp.push_back(it.second[i + 1] - it.second[i]);
+        }
+        int n = (int)temp.size();
+        for (int i = 0; i < temp.size(); i++) {
+            answer += 1LL * (n - i) * i * abs(temp[i]);
+        }
+    }
+    for (auto &it : col) {
+        vi temp;
+        temp.push_back(0);
+        for (int i = 0; i + 1 < it.second.size(); i++) {
+            temp.push_back(it.second[i + 1] - it.second[i]);
+        }
+        int n = (int)temp.size();
+        cout << nl;
+        for (int i = 0; i < temp.size(); i++) {
+            answer += 1LL * (n - i) * i * abs(temp[i]);
+        }
+    }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }
     return 0;
 }
-s
