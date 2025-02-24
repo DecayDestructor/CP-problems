@@ -77,38 +77,40 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
+int absoluteSum(int x, vector<int> &temp) {
+    int sum = 0;
+    for (int i = 0; i < temp.size(); i++) {
+        sum += abs(x + i - temp[i]);
+    }
+    return sum;
+}
+
 void solve() {
+    int n;
+    cin >> n;
     string s;
     cin >> s;
-    int n = s.length();
-    vector<int> alpha(26, 0);
-    for (char &ch : s) {
-        alpha[ch - 'a']++;
-    }
-    vector<char> ans(n);
-    int start = 0, end = n - 1;
-    stack<char> stk;
-    for (int i = 0; i < 26; i++) {
-                int req = alpha[i] / 2;
-        while (req--) {
-            ans[start++] = (char)(i + 'a');
-            ans[end--] = (char)(i + 'a');
-        }
-        if (alpha[i] % 2) stk.push((char)(i + 'a'));
-        if (stk.size() == 2) {
-            ans[end--] = stk.top();
-            stk.pop();
-            ans[start++] = stk.top();
-            stk.pop();
+    int left = 1, right = n - 1;
+    vector<int> temp;
+    for (int i = 0; i < n; i++) {
+        if (s[i] == '*') {
+            temp.push_back(i);
         }
     }
-    if (stk.size()) {
-        ans[start++] = stk.top();
-        stk.pop();
+    int size = temp.size();
+    int answer = absoluteSum(0, temp);
+    while (left <= right) {
+        int middle = left + (right - left) / 2;
+        int curr = absoluteSum(middle, temp);
+        int prev = absoluteSum(middle - 1, temp);
+        if (prev >= curr) {
+            left = middle + 1;
+            answer = curr;
+        } else {
+            right = middle - 1;
+        }
     }
-    string finalAns = "";
-    for (int i = 25; i >= 0; i--) {
-    }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

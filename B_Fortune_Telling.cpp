@@ -78,37 +78,19 @@ ll binpow(ll a, ll b, ll m) {
     return res;
 }
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    vector<int> alpha(26, 0);
-    for (char &ch : s) {
-        alpha[ch - 'a']++;
+    int n, x, y;
+    cin >> n >> x >> y;
+    int par = y % 2;
+    int exor = x;
+    for (int i = 0; i < n; i++) {
+        int a;
+        cin >> a;
+        exor = exor ^ a;
     }
-    vector<char> ans(n);
-    int start = 0, end = n - 1;
-    stack<char> stk;
-    for (int i = 0; i < 26; i++) {
-                int req = alpha[i] / 2;
-        while (req--) {
-            ans[start++] = (char)(i + 'a');
-            ans[end--] = (char)(i + 'a');
-        }
-        if (alpha[i] % 2) stk.push((char)(i + 'a'));
-        if (stk.size() == 2) {
-            ans[end--] = stk.top();
-            stk.pop();
-            ans[start++] = stk.top();
-            stk.pop();
-        }
-    }
-    if (stk.size()) {
-        ans[start++] = stk.top();
-        stk.pop();
-    }
-    string finalAns = "";
-    for (int i = 25; i >= 0; i--) {
-    }
+    if (exor % 2 == par)
+        cout << "Alice" << nl;
+    else
+        cout << "Bob" << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
