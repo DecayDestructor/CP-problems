@@ -8,6 +8,7 @@
     "*.tcc": "cpp",
     "initializer_list": "cpp",
     "valarray": "cpp",
-    "cstdlib": "cpp"
+    "cstdlib": "cpp",
+    "vector": "cpp"
   }
 }
