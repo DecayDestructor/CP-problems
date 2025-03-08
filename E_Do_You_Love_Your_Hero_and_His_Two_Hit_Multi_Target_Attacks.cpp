@@ -100,23 +100,48 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+int helper(int k) {
+    int left = 0, right = k;
+    int answer = -1;
+    while (left <= right) {
+        int middle = left + (right - left) / 2;
+        if (1LL * middle * (middle - 1) <= k) {
+            answer = max(answer, middle);
+            left = middle + 1;
+        } else
+            right = middle - 1;
+    }
+    return answer;
+}
 void solve() {
-    int n;
-    cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    int k;
+    cin >> k;
+    vpp<int, int> answer;
+    int x = -1e9;
+    int y = -1e9;
+    k = k * 2;
+    // cout << helper(1e5) << nl;
+    int counter = 0;
+    if (!k) {
+        cout << 1 << nl << 1 << " " << 2 << nl;
+        return;
+    } else {
+        while (k) {
+            int points = helper(k);
+            // cout << "points " << points << " : " << k << nl;
+            counter += points;
+            k = k - ((points) * (points - 1));
+            while (points--) {
+                answer.push_back({x, y++});
+            }
+            x++;
+            // cout << k << " reduced" << nl;
+        }
+        cout << answer.size() << nl;
+        for (auto &it : answer) {
+            cout << it.first << " " << it.second << nl;
+        }
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
-    }
-    cout << a / 2 << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

@@ -103,27 +103,25 @@ ll mod_div(ll a, ll b, ll m) {
 void solve() {
     int n;
     cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    vll dp(n + 1);
+    dp[0] = dp[1] = 0;
+    dp[2] = 2;
+    if (n & 1) {
+        cout << 0 << nl;
+        return;
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    for (int i = 3; i <= n; i++) {
+        dp[i] = 1LL * 2 * dp[i - 2];
     }
-    cout << a / 2 << nl;
+    // cout << "test" << nl;
+    cout << dp[n] << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

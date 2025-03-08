@@ -103,20 +103,36 @@ ll mod_div(ll a, ll b, ll m) {
 void solve() {
     int n;
     cin >> n;
+    map<int, vi> mpp;
     vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    int index = 0;
+    for (auto &it : arr) {
+        cin >> it;
+        mpp[it].push_back(index++);
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    int start = mpp.begin()->first;
+    int sindex = mpp[start][0] + 1;
+    int diff;
+    if (mpp.size() == 1) {
+        pn;
+        return;
+    } else {
+        py;
+        for (auto &it : mpp) {
+            if (it.first == start) {
+                continue;
+            } else {
+                diff = it.first;
+                for (auto &jt : it.second) {
+                    cout << sindex << " " << jt + 1 << nl;
+                }
+            }
+        }
+        for (auto it : mpp[start]) {
+            if (it + 1 != sindex)
+                cout << mpp[diff][0] + 1 << " " << it + 1 << nl;
+        }
     }
-    cout << a / 2 << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

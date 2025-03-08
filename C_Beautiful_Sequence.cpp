@@ -104,19 +104,26 @@ void solve() {
     int n;
     cin >> n;
     vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    int MOD = 998244353;
+    vll dp(4, 0);
+    for (auto &it : arr) {
+        cin >> it;
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    for (auto &it : arr) {
+        if (it == 1) {
+            dp[1] = mod_add((int)1, dp[1], MOD);
+            // cout << 1 << " : " << dp[1] << nl;
+        }
+        if (it == 2) {
+            dp[2] = mod_add(mod_mul(2, dp[2], MOD), dp[1], MOD);
+            // cout << 2 << " : " << dp[2] << nl;
+        }
+        if (it == 3) {
+            dp[3] = mod_add(dp[2], dp[3], MOD);
+            // cout << 3 << " : " << dp[3] << nl;
+        }
     }
-    cout << a / 2 << nl;
+    cout << dp[3] % MOD << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

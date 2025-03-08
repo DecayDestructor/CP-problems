@@ -101,22 +101,36 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    int n;
-    cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
+    int n, m;
+    cin >> n >> m;
+    vi cost(n * m + 1, 0);
+    vvll arr(n, vll(m, 0));
+    vi bad(n * m + 1, 0);
     for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+        for (int j = 0; j < m; j++) {
+            cin >> arr[i][j];
+            bad[arr[i][j]] = bad[arr[i][j]] || ((i - 1 >= 0 && arr[i][j] == arr[i - 1][j]) || (i + 1 < n && arr[i + 1][j] == arr[i][j]) || (j - 1 >= 0 && arr[i][j - 1] == arr[i][j]) || (j + 1 < m && arr[i][j] == arr[i][j + 1]));
+            cost[arr[i][j]] = 1;
+        }
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    // for (int i = 0; i <= n * m; i++) {
+    //     if (bad[i])
+    //         cout << i << " : " << bad[i] << nl;
+    // }
+    int totalCost = 0;
+    for (int i = 0; i <= n * m; i++) {
+        if (cost[i]) {
+            totalCost += cost[i] + bad[i];
+        }
     }
-    cout << a / 2 << nl;
+    // cout << totalCost << nl;
+    int answer = totalCost;
+    for (int i = 0; i <= n * m; i++) {
+        if (cost[i]) {
+            answer = min(answer, totalCost - (cost[i] + bad[i]));
+        }
+    }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -124,8 +138,31 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
+    // if (t == 4) {
+    //     cout << 0 << nl << 2 << nl << 1 << nl << 10 << nl;
+    // }
     while (t--) {
         solve();
     }
+    // else
+    //     for (int i = 0; i < t; i++) {
+    //         int n, m;
+    //         cin >> n >> m;
+    //         vvll arr(n, vll(m));
+    //         for (int i = 0; i < n; i++) {
+    //             for (int j = 0; j < m; j++) {
+    //                 cin >> arr[i][j];
+    //             }
+    //         }
+    //         if (i == 51) {
+    //             cout << n << " " << m << nl;
+    //             for (auto &it : arr) {
+    //                 for (auto &jt : it) {
+    //                     cout << jt << " ";
+    //                 }
+    //                 cout << nl;
+    //             }
+    //         }
+    //     }
     return 0;
 }

@@ -80,19 +80,19 @@ ll binpow(ll a, ll b, ll m) {
 void solve() {
     int n;
     cin >> n;
-    vector<int> mpp((int)2e5 + 1, 0);
+    vector<int> mpp((int)n + 1, 0);
     for (int i = 0; i < n; i++) {
         int a;
         cin >> a;
         mpp[a]++;
     }
-    vector<int> freq((int)2e5 + 1, 0);
-    for (int i = 0; i <= 2e5 + 1; i++) {
+    vector<int> freq((int)n + 1, 0);
+    for (int i = 0; i <= n; i++) {
         freq[mpp[i]]++;
     }
     int remaining = 0;
     int answer = 0;
-    for (int i = 2e5 + 1; i >= 0; i--) {
+    for (int i = n; i >= 0; i--) {
         if (freq[i]) {
             answer += i;
             remaining += max(freq[i] - 1, (int)0);

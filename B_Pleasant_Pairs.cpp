@@ -104,19 +104,11 @@ void solve() {
     int n;
     cin >> n;
     vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    for (auto &it : arr) cin >> it;
+    for (int i = 1; i <= n; i++) {
+        int ai = arr[i - 1];
+        int base = ai - i + ai;
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
-    }
-    cout << a / 2 << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

@@ -101,22 +101,27 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    int n;
-    cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
+    ll n, m;
+    cin >> n >> m;
+    vi arr(m);
     for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+        int a;
+        cin >> a;
+        arr[a % m]++;
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    int counter = arr[0] > 0;
+    for (int it = 1; it < m; it++) {
+        if (arr[it] == 0 || arr[m - it] == 0) continue;
+        int mini = min(arr[it], arr[m - it]);
+        int maxi = max(arr[m - it], arr[it]);
+        arr[it] = max(0LL, arr[it] - (mini + 1));
+        arr[m - it] = max(0LL, arr[m - it] - (mini + 1));
+        counter++;
     }
-    cout << a / 2 << nl;
+    for (int i = 1; i < m; i++) {
+        counter += arr[i];
+    }
+    cout << counter << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

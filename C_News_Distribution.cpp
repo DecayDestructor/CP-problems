@@ -100,30 +100,82 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+class DisjointSet {
+    vector<int> rank, parent, size;
+
+   public:
+    DisjointSet(int n) {
+        rank.resize(n + 1, 0);
+        parent.resize(n + 1);
+        size.resize(n + 1);
+        for (int i = 0; i <= n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    }
+
+    int findUPar(int node) {
+        if (node == parent[node])
+            return node;
+        return parent[node] = findUPar(parent[node]);
+    }
+
+    void unionByRank(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if (ulp_u == ulp_v) return;
+        if (rank[ulp_u] < rank[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+        } else if (rank[ulp_v] < rank[ulp_u]) {
+            parent[ulp_v] = ulp_u;
+        } else {
+            parent[ulp_v] = ulp_u;
+            rank[ulp_u]++;
+        }
+    }
+
+    void unionBySize(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if (ulp_u == ulp_v) return;
+        if (size[ulp_u] < size[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+            size[ulp_v] += size[ulp_u];
+        } else {
+            parent[ulp_v] = ulp_u;
+            size[ulp_u] += size[ulp_v];
+        }
+    }
+};
+
 void solve() {
-    int n;
-    cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    int n, m;
+    cin >> n >> m;
+    DisjointSet ds(n);
+    for (int i = 0; i < m; i++) {
+        int s;
+        cin >> s;
+        vector<int> temp(s);
+        for (auto &it : temp) cin >> it;
+        for (int i = 1; i < s; i++) {
+            ds.unionBySize(temp[0], temp[i]);
+        }
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    for (int i = 1; i <= n; i++) {
+        cout << ds.getSize(i) << " ";
     }
-    cout << a / 2 << nl;
+    vector<int> parents = ds.getParents();
+    // for (int i = 0; i <= n; i++) {
+    //     cout << i << " : " << parents[i] << nl;
+    // }
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

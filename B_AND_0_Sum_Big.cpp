@@ -101,22 +101,10 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    int n;
-    cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
-    }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
-    }
-    cout << a / 2 << nl;
+    int MOD = (int)1e9 + 7;
+    int n, k;
+    cin >> n >> k;
+    cout << binpow(n, k, MOD) << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

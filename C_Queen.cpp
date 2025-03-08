@@ -100,30 +100,55 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+void dfs(int root, vvll &adj, vi &answer, vi &c, vi &visited) {
+    if (visited[root]) return;
+    visited[root] = 1;
+    vi temp;
+    bool all = true;
+    for (auto &it : adj[root]) {
+        if (c[it])
+            temp.push_back(it);
+        else
+            all = false;
+    }
+    if (all && c[root]) answer.push_back(root);
+    for (auto &it : adj[root]) {
+        dfs(it, adj, answer, c, visited);
+    }
+}
 void solve() {
-    int n;
+    ll n;
     cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    vvll adj(n + 1);
+    int root = -1;
+    vi c(n + 1, 0);
+    vi visited(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+        int parent, respect;
+        cin >> parent >> respect;
+        if (parent == -1) {
+            root = i;
+        } else
+            adj[parent].push_back(i);
+        c[i] = respect;
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    vi answer;
+    vll finalAnswer;
+    dfs(root, adj, answer, c, visited);
+    if (answer.size() == 0)
+        cout << -1 << nl;
+    else {
+        sort(all(answer));
+        for (auto &it : answer) cout << it << " ";
     }
-    cout << a / 2 << nl;
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

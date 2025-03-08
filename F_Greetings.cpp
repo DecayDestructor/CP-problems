@@ -1,6 +1,12 @@
 #include <bits/stdc++.h>
-using namespace std;
 
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+using namespace std;
+using namespace __gnu_pbds;
+
+typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> pbds;  // find_by_order, order_of_key
 #define nl '\n'
 #define loop(s, n) for (ll i = s; i < n; i++)
 #define all(a) a.begin(), a.end()
@@ -103,20 +109,26 @@ ll mod_div(ll a, ll b, ll m) {
 void solve() {
     int n;
     cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    vpp<int, int> pairs(n);
+    for (auto &it : pairs) cin >> it.first >> it.second;
+    auto cmp = [&](pair<int, int> a, pair<int, int> b) {
+        if (a.second != b.second)
+            return a.second < b.second;
+        else
+            return a.first < b.first;
+    };
+    sort(all(pairs), cmp);
+    // for (auto &it : pairs) cout << it.first << " : " << it.second << nl;
+    pbds os;
+    for (auto &it : pairs) {
+        os.insert(it.first);
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
+    int counter = 0;
+    for (auto &it : pairs) {
+        counter += os.order_of_key(it.first);
+        os.erase(it.first);
     }
-    cout << a / 2 << nl;
+    cout << counter << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

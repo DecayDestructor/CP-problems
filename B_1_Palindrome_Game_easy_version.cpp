@@ -103,20 +103,13 @@ ll mod_div(ll a, ll b, ll m) {
 void solve() {
     int n;
     cin >> n;
-    vll arr(n);
-    int hasEven = 0, hasOdd = 0;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        // int a = arr[i];
+    string s;
+    cin >> s;
+    int counter = 0;
+    for (auto &ch : s) {
+        counter += ch == '0';
     }
-    int a = 2;
-    set<int> stt;
-    while (stt.size() != 2) {
-        stt.clear();
-        for (auto &it : arr) stt.insert(it % a);
-        a = (a << 1);
-    }
-    cout << a / 2 << nl;
+    cout << (counter % 2 && counter != 1 ? "ALICE" : "BOB") << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
