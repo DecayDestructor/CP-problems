@@ -100,28 +100,39 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-void solve() {
-    int n, m;
-    cin >> n >> m;
-    vll a(n), b(m);
-    for (auto &it : a) cin >> it;
-    for (auto &it : b) cin >> it;
-    sort(all(b));
-    vi temp;
-    int curr = min(b[0] - a[0], a[0]);
-    for (int i = 1; i < n; i++) {
-        int req = curr + a[i];
-        auto it = lower_bound(all(b), req);
-        if (it == b.end() && a[i] < curr) {
-            pn;
-            return;
-        }
-        if (a[i] < curr) {
-            curr = *it - a[i];
-        } else
-            curr = min(*it - a[i], a[i]);
+int helper(vll &a) {
+    int n = a.size();
+    if (!n) {
+        return 0;
     }
-    py;
+    if (n == 1) {
+        return abs(a[0]);
+    } else
+        return abs(a[n - 1] - a[0]);
+}
+void solve() {
+    int n;
+    cin >> n;
+    vll arr(n);
+    for (auto &it : arr) cin >> it;
+    int maxi = 0;
+    for (auto &it : arr) maxi += it;
+    // cout << maxi << nl;
+    maxi = max(maxi, helper(arr));
+    if (n == 1) {
+        cout << arr[0] << nl;
+        return;
+    }
+    while (n > 0) {
+        vll temp;
+        for (int i = 1; i < n; i++) {
+            temp.push_back(arr[i] - arr[i - 1]);
+        }
+        maxi = max(maxi, helper(temp));
+        arr = temp;
+        n--;
+    }
+    cout << maxi << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -132,24 +143,5 @@ signed main() {
     while (t--) {
         solve();
     }
-    // if (t == 5) {
-    //     while (t--) {
-    //         solve();
-    //     }
-    // } else
-    //     for (int i = 0; i < t; i++) {
-    //         int n, m;
-    //         cin >> n >> m;
-    //         vll a(n), b(m);
-    //         for (auto &it : a) cin >> it;
-    //         for (auto &it : b) cin >> it;
-    //         if (i == 6836) {
-    //             cout << n << " " << m << nl;
-    //             for (auto &it : a) cout << it << " ";
-    //             cout << nl;
-    //             for (auto &it : b) cout << it << " ";
-    //             cout << nl;
-    //         }
-    //     }
     return 0;
 }

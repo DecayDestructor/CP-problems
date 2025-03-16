@@ -21,16 +21,20 @@ ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+// template <typename T>
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
             if (i * i != n) {
                 factors.push_back(n / i);
             }
+            n = n / i;
         }
+    }
+    if (n > 1) {
+        factors.push_back(n);
     }
     return factors;
 }
@@ -101,27 +105,29 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vll a(n), b(m);
-    for (auto &it : a) cin >> it;
-    for (auto &it : b) cin >> it;
-    sort(all(b));
-    vi temp;
-    int curr = min(b[0] - a[0], a[0]);
-    for (int i = 1; i < n; i++) {
-        int req = curr + a[i];
-        auto it = lower_bound(all(b), req);
-        if (it == b.end() && a[i] < curr) {
-            pn;
-            return;
+    int n;
+    cin >> n;
+    vector<int> primes = factorization(n);
+    int answer = 1;
+    if (n % 2 == 0) {
+        cout << n / 2 << " " << n / 2 << nl;
+        return;
+    } else {
+        int a, b, l;
+        for (auto &it : primes) {
+            if (it == n) continue;
+            cout << a << nl;
+            a = it;
+            b = n - it;
+            l = lcm(a, b);
+            if (l < answer) {
+                a = it;
+                b = n - it;
+                answer = l;
+            }
         }
-        if (a[i] < curr) {
-            curr = *it - a[i];
-        } else
-            curr = min(*it - a[i], a[i]);
+        cout << a << " " << n - a << nl;
     }
-    py;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -132,24 +138,5 @@ signed main() {
     while (t--) {
         solve();
     }
-    // if (t == 5) {
-    //     while (t--) {
-    //         solve();
-    //     }
-    // } else
-    //     for (int i = 0; i < t; i++) {
-    //         int n, m;
-    //         cin >> n >> m;
-    //         vll a(n), b(m);
-    //         for (auto &it : a) cin >> it;
-    //         for (auto &it : b) cin >> it;
-    //         if (i == 6836) {
-    //             cout << n << " " << m << nl;
-    //             for (auto &it : a) cout << it << " ";
-    //             cout << nl;
-    //             for (auto &it : b) cout << it << " ";
-    //             cout << nl;
-    //         }
-    //     }
     return 0;
 }

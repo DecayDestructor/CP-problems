@@ -81,20 +81,30 @@ void solve() {
     int n, k;
     cin >> n >> k;
     vll arr(n);
-    map<ll, ll> mpp;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
+    for (auto &it : arr) cin >> it;
+    int left = 1;
+    int right = n - k + 1;
+    if (n == k) {
+        vi temp;
+        for (int i = 1; i < n; i += 2) {
+            temp.push_back(arr[i]);
+        }
+        for (int i = 1; i <= temp.size(); i++) {
+            if (i != temp[i - 1]) {
+                cout << i << nl;
+                return;
+            }
+        }
+        cout << temp.size() + 1 << nl;
+        return;
     }
-    for (int i = 0; i < n - k + 1; i++) {
-        mpp[arr[i]]++;
-    }
-    int pointer = n - k;
-    for (int i = 1; i <= k; i++) {
-        if (mpp.find(i) != mpp.end()) {
-            cout << i << nl;
+    while (left <= right) {
+        if (arr[left++] != 1) {
+            cout << 1 << nl;
             return;
         }
     }
+    cout << 2 << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

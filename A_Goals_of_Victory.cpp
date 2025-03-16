@@ -101,28 +101,17 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vll a(n), b(m);
-    for (auto &it : a) cin >> it;
-    for (auto &it : b) cin >> it;
-    sort(all(b));
-    vi temp;
-    int curr = min(b[0] - a[0], a[0]);
-    for (int i = 1; i < n; i++) {
-        int req = curr + a[i];
-        auto it = lower_bound(all(b), req);
-        if (it == b.end() && a[i] < curr) {
-            pn;
-            return;
-        }
-        if (a[i] < curr) {
-            curr = *it - a[i];
-        } else
-            curr = min(*it - a[i], a[i]);
+    int n;
+    cin >> n;
+    vll arr(n - 1);
+    int counter = 0;
+    for (auto &it : arr) {
+        cin >> it;
+        counter += it;
     }
-    py;
+    cout << -1 * counter << nl;
 }
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
@@ -132,24 +121,5 @@ signed main() {
     while (t--) {
         solve();
     }
-    // if (t == 5) {
-    //     while (t--) {
-    //         solve();
-    //     }
-    // } else
-    //     for (int i = 0; i < t; i++) {
-    //         int n, m;
-    //         cin >> n >> m;
-    //         vll a(n), b(m);
-    //         for (auto &it : a) cin >> it;
-    //         for (auto &it : b) cin >> it;
-    //         if (i == 6836) {
-    //             cout << n << " " << m << nl;
-    //             for (auto &it : a) cout << it << " ";
-    //             cout << nl;
-    //             for (auto &it : b) cout << it << " ";
-    //             cout << nl;
-    //         }
-    //     }
     return 0;
 }

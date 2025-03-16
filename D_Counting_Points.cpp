@@ -100,28 +100,42 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+int sqrt(int a) {
+    int left = 1, right = 1e9;
+    int answer = -1;
+    while (left <= right) {
+        int middle = left + (right - left) / 2;
+        if (1ll * middle * middle <= a) {
+            answer = max(answer, middle);
+            left = middle + 1;
+        } else
+            right = middle - 1;
+    }
+    return answer;
+}
 void solve() {
     int n, m;
     cin >> n >> m;
-    vll a(n), b(m);
-    for (auto &it : a) cin >> it;
-    for (auto &it : b) cin >> it;
-    sort(all(b));
-    vi temp;
-    int curr = min(b[0] - a[0], a[0]);
-    for (int i = 1; i < n; i++) {
-        int req = curr + a[i];
-        auto it = lower_bound(all(b), req);
-        if (it == b.end() && a[i] < curr) {
-            pn;
-            return;
-        }
-        if (a[i] < curr) {
-            curr = *it - a[i];
-        } else
-            curr = min(*it - a[i], a[i]);
+    vpp<int, int> circles(n);
+    for (auto &it : circles) {
+        cin >> it.first;
     }
-    py;
+    for (auto &it : circles) cin >> it.second;
+    map<int, int> mpp;
+    for (auto &it : circles) {
+        int x = it.first;
+        int r = it.second;
+        for (int i = -r; i <= r; i++) {
+            int height = sqrt(1ll * r * r - 1ll * i * i);
+            mpp[x + i] = max(mpp[x + i], height);
+        }
+    }
+    int counter = 0;
+    for (auto &it : mpp) {
+        // cout << it.first << " : " << it.second << nl;
+        counter += it.second * 2 + 1;
+    }
+    cout << counter << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -132,24 +146,5 @@ signed main() {
     while (t--) {
         solve();
     }
-    // if (t == 5) {
-    //     while (t--) {
-    //         solve();
-    //     }
-    // } else
-    //     for (int i = 0; i < t; i++) {
-    //         int n, m;
-    //         cin >> n >> m;
-    //         vll a(n), b(m);
-    //         for (auto &it : a) cin >> it;
-    //         for (auto &it : b) cin >> it;
-    //         if (i == 6836) {
-    //             cout << n << " " << m << nl;
-    //             for (auto &it : a) cout << it << " ";
-    //             cout << nl;
-    //             for (auto &it : b) cout << it << " ";
-    //             cout << nl;
-    //         }
-    //     }
     return 0;
 }

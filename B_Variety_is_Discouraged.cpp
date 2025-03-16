@@ -109,6 +109,7 @@ void solve() {
     for (int i = 0; i < i < n; i++) {
         cin >> arr[i];
         stt.insert(arr[i]);
+        
     }
 }
 signed main() {

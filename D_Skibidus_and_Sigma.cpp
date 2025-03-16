@@ -103,25 +103,36 @@ ll mod_div(ll a, ll b, ll m) {
 void solve() {
     int n, m;
     cin >> n >> m;
-    vll a(n), b(m);
-    for (auto &it : a) cin >> it;
-    for (auto &it : b) cin >> it;
-    sort(all(b));
-    vi temp;
-    int curr = min(b[0] - a[0], a[0]);
-    for (int i = 1; i < n; i++) {
-        int req = curr + a[i];
-        auto it = lower_bound(all(b), req);
-        if (it == b.end() && a[i] < curr) {
-            pn;
-            return;
+    vvll arr(n, vll(m));
+    vpp<int, int> tracker;
+    for (int i = 0; i < n; i++) {
+        int counter = 0;
+        for (int j = 0; j < m; j++) {
+            cin >> arr[i][j];
+            counter += arr[i][j];
         }
-        if (a[i] < curr) {
-            curr = *it - a[i];
-        } else
-            curr = min(*it - a[i], a[i]);
+        tracker.push_back({counter, i});
     }
-    py;
+    auto cmp = [&](pair<int, int> &a, pair<int, int> &b) {
+        if (a.first != b.first) {
+            return a.first > b.first;
+        } else
+            return a.second < b.second;
+    };
+    sort(all(tracker), cmp);
+    vll finalarr;
+    for (auto &it : tracker) {
+        for (auto &jt : arr[it.second]) {
+            finalarr.push_back(jt);
+        }
+    }
+    vll prefix(n * m + 1, 0);
+    for (int i = 0; i < n * m; i++) {
+        prefix[i + 1] += prefix[i] + finalarr[i];
+    }
+    int sum = 0;
+    for (auto &it : prefix) sum += it;
+    cout << sum << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -132,24 +143,5 @@ signed main() {
     while (t--) {
         solve();
     }
-    // if (t == 5) {
-    //     while (t--) {
-    //         solve();
-    //     }
-    // } else
-    //     for (int i = 0; i < t; i++) {
-    //         int n, m;
-    //         cin >> n >> m;
-    //         vll a(n), b(m);
-    //         for (auto &it : a) cin >> it;
-    //         for (auto &it : b) cin >> it;
-    //         if (i == 6836) {
-    //             cout << n << " " << m << nl;
-    //             for (auto &it : a) cout << it << " ";
-    //             cout << nl;
-    //             for (auto &it : b) cout << it << " ";
-    //             cout << nl;
-    //         }
-    //     }
     return 0;
 }
