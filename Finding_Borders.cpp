@@ -65,7 +65,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -102,29 +102,67 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-void solve() {
+struct Hashing {
+    string s;
     int n;
-    cin >> n;
-
-    int a, b, c;
-    int b_remaining = n % 2;
-    b = n / 2;
-    int a_remaining = n - (b_remaining * 2 + b);
-    if (b_remaining) b++;
-    a = a_remaining / 3;
-    a_remaining = a_remaining % 3;
-    c = n / 2;
-    int c_remaining = n % 2;
-    int offset = 0;
-    if (!a_remaining && !c_remaining) {
-        offset = 0;
-    } else if (18 * a_remaining + 25 * c_remaining <= 60) {
-        offset = 1;
-    } else {
-        offset = 2;
+    int primes;
+    vector<ll> hashPrimes = {1000000009, 100000007};
+    const ll base = 31;
+    vector<vector<ll>> hashValues;
+    vector<vector<ll>> powersOfBase;
+    vector<vector<ll>> inversePowersOfBase;
+    Hashing(string a) {
+        primes = hashPrimes.size();
+        hashValues.resize(primes);
+        powersOfBase.resize(primes);
+        inversePowersOfBase.resize(primes);
+        s = a;
+        n = s.length();
+        for (int i = 0; i < hashPrimes.size(); i++) {
+            powersOfBase[i].resize(n + 1);
+            inversePowersOfBase[i].resize(n + 1);
+            powersOfBase[i][0] = 1;
+            for (int j = 1; j <= n; j++) {
+                powersOfBase[i][j] = (base * powersOfBase[i][j - 1]) % hashPrimes[i];
+            }
+            inversePowersOfBase[i][n] = mminvprime(powersOfBase[i][n], hashPrimes[i]);
+            for (int j = n - 1; j >= 0; j--) {
+                inversePowersOfBase[i][j] = mod_mul(inversePowersOfBase[i][j + 1], base, hashPrimes[i]);
+            }
+        }
+        for (int i = 0; i < hashPrimes.size(); i++) {
+            hashValues[i].resize(n);
+            for (int j = 0; j < n; j++) {
+                hashValues[i][j] = ((s[j] - 'a' + 1LL) * powersOfBase[i][j]) % hashPrimes[i];
+                hashValues[i][j] = (hashValues[i][j] + (j > 0 ? hashValues[i][j - 1] : 0LL)) % hashPrimes[i];
+            }
+        }
     }
-    int total = a + b + c + offset;
-    cout << total << nl;
+    vector<ll> substringHash(int l, int r) {
+        vector<ll> hash(primes);
+        for (int i = 0; i < primes; i++) {
+            ll val1 = hashValues[i][r];
+            ll val2 = l > 0 ? hashValues[i][l - 1] : 0LL;
+            hash[i] = mod_mul(mod_sub(val1, val2, hashPrimes[i]), inversePowersOfBase[i][l], hashPrimes[i]);
+        }
+        return hash;
+    }
+};
+void solve() {
+    string s;
+    cin >> s;
+    int n = s.length();
+    Hashing hash1(s);
+    int len = 1;
+    vi answer;
+    while (len < n) {
+        pair<int, int> prefix = {0, len - 1};
+        pair<int, int> suffix = {n - len, n - 1};
+        if (hash1.substringHash(prefix.first, prefix.second) == hash1.substringHash(suffix.first, suffix.second)) answer.push_back(len);
+        len++;
+    }
+    for (auto &it : answer) cout << it << " ";
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

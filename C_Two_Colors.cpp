@@ -35,7 +35,8 @@ vector<T> factorization(int n) {
     return factors;
 }
 // Prime Factorization
-void primeFactorisation(ll n, map<ll, ll> &mpp) {
+map<int, int> primeFactorisation(ll n) {
+    map<int, int> mpp;
     for (ll i = 2; i <= sqrt(n); i++) {
         while (n % i == 0) {
             mpp[i]++;
@@ -44,6 +45,7 @@ void primeFactorisation(ll n, map<ll, ll> &mpp) {
     }
     if (n != 1)
         mpp[n]++;
+    return mpp;
 }
 // Sieve of Eratosthenes
 vector<ll> sieveOfEratosthenes(int n) {
@@ -77,40 +79,61 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
-void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    vector<int> alpha(26, 0);
-    for (auto &it : s) alpha[it - 'a']++;
-    vector<char> answer(n);
-    int left = 0, right = n - 1;
-    vch temp;
-    for (int i = 0; i < 26; i++) {
-        while (alpha[i] > 1) {
-            answer[left++] = 'a' + i;
-            answer[right--] = 'a' + i;
-            alpha[i] -= 2;
-        }
-        if (alpha[i]) {
-            temp.push_back('a' + i);
-            alpha[i]--;
-        }
-        if (temp.size() == 1) {
-            break;
-        }
-    }
-    if (temp.size() > 0) {
-        answer[right--] = temp[0];
-    }
-    for (int i = 0; i < 26; i++) {
-        if (alpha[i])
-            answer[left++] = i + 'a';
-    }
-    for (auto &it : answer) cout << it;
-    cout << nl;
+ll mminvprime(ll a, ll m) {
+    return binpow(a, m - 2, m);
 }
-
+ll mod_add(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a + b) % m) + m) % m;
+}
+ll mod_mul(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a * b) % m) + m) % m;
+}
+ll mod_sub(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a - b) % m) + m) % m;
+}
+ll mod_div(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+}
+void solve() {
+    int n, k;
+    cin >> n >> k;
+    vll arr(k);
+    vi fixed;
+    for (auto &it : arr) cin >> it;
+    sort(all(arr));
+    vi prefix(k + 1, 0);
+    for (int i = 1; i <= k; i++) {
+        prefix[i] = prefix[i - 1] + max(n - arr[i - 1], 1ll);
+    }
+    int answer = 0;
+    for (int i = 0; i < k; i++) {
+        int a = arr[i];
+        int left = i + 1;
+        int right = k - 1;
+        int target = n - a;
+        int index = k;
+        while (left <= right) {
+            int middle = left + (right - left) / 2;
+            if (arr[middle] < target) {
+                left = middle + 1;
+            } else {
+                index = min(middle, index);
+                right = middle - 1;
+            }
+        }
+        int sum = prefix[k] - prefix[index];
+        answer += 2ll * (((k - index) * min(a, n - 1) * 1ll) - sum + k - index);
+    }
+    cout << answer << nl;
+}
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

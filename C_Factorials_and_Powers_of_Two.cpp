@@ -35,7 +35,8 @@ vector<T> factorization(int n) {
     return factors;
 }
 // Prime Factorization
-void primeFactorisation(ll n, map<ll, ll> &mpp) {
+map<int, int> primeFactorisation(ll n) {
+    map<int, int> mpp;
     for (ll i = 2; i <= sqrt(n); i++) {
         while (n % i == 0) {
             mpp[i]++;
@@ -44,6 +45,7 @@ void primeFactorisation(ll n, map<ll, ll> &mpp) {
     }
     if (n != 1)
         mpp[n]++;
+    return mpp;
 }
 // Sieve of Eratosthenes
 vector<ll> sieveOfEratosthenes(int n) {
@@ -77,46 +79,58 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
-void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    vector<int> alpha(26, 0);
-    for (auto &it : s) alpha[it - 'a']++;
-    vector<char> answer(n);
-    int left = 0, right = n - 1;
-    vch temp;
-    for (int i = 0; i < 26; i++) {
-        while (alpha[i] > 1) {
-            answer[left++] = 'a' + i;
-            answer[right--] = 'a' + i;
-            alpha[i] -= 2;
-        }
-        if (alpha[i]) {
-            temp.push_back('a' + i);
-            alpha[i]--;
-        }
-        if (temp.size() == 1) {
-            break;
-        }
-    }
-    if (temp.size() > 0) {
-        answer[right--] = temp[0];
-    }
-    for (int i = 0; i < 26; i++) {
-        if (alpha[i])
-            answer[left++] = i + 'a';
-    }
-    for (auto &it : answer) cout << it;
-    cout << nl;
+ll mminvprime(ll a, ll m) {
+    return binpow(a, m - 2, m);
 }
-
+ll mod_add(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a + b) % m) + m) % m;
+}
+ll mod_mul(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a * b) % m) + m) % m;
+}
+ll mod_sub(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a - b) % m) + m) % m;
+}
+ll mod_div(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+}
+int ones(int a) {
+    int counter = 0;
+    while (a) {
+        counter += a & 1;
+        a = a >> 1;
+    }
+    return counter;
+}
+vi fact(15, 1);
+int total(int n, int f) {
+    if (fact[f] > n) {
+        return 0;
+    }
+    int take = total(n - fact[f], f + 1) + ones(n - fact[f]);
+}
+void solve() {
+    int n;
+    cin >> n;
+}
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
     cin >> t;
+
+    for (int i = 1; i <= 14; i++) {
+        fact[i] = fact[i - 1] * i;
+    }
     while (t--) {
         solve();
     }
