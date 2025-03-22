@@ -102,11 +102,24 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+int customSQRT(int a) {
+    int left = 0, right = 1e9;
+    int answer = 0;
+    while (left <= right) {
+        int middle = left + (right - left) / 2;
+        if (1ll * middle * middle <= a) {
+            answer = max(answer, middle);
+            left = middle + 1;
+        } else
+            right = middle - 1;
+    }
+    return answer;
+}
 void solve() {
     int n;
     cin >> n;
-    vi factors = factorization<int>(n);
-    for (auto &it)
+    // cout << sqrt(8070) << nl;
+    cout << max((int)min(n, min(n + 1, (customSQRT(2 * n - 1) - 1) / 2)), 0ll) << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

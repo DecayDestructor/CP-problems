@@ -103,10 +103,19 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 vi dearr((int)1e6 + 1, 1);
+int MOD = (int)1e9 + 7;
 void dearrangement() {
     dearr[1] = 0;
+    dearr[2] = 1;
+    for (int i = 3; i <= (1e6); i++) {
+        dearr[i] = ((i - 1) * (dearr[i - 1] + dearr[i - 2])) % MOD;
+    }
 }
+
 void solve() {
+    int n;
+    cin >> n;
+    cout << dearr[n] << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -114,6 +123,7 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     // cin >> t;
+    dearrangement();
     while (t--) {
         solve();
     }

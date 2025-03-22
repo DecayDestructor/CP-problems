@@ -21,18 +21,17 @@ ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
-    for (int i = 1; i * i <= n; i++) {
-        if (n % i == 0) {
-            factors.push_back(i);
-            if (i * i != n) {
-                factors.push_back(n / i);
-            }
+vector<long long> trial_division1(long long n) {
+    vector<long long> factorization;
+    for (long long d = 2; d * d <= n; d++) {
+        while (n % d == 0) {
+            factorization.push_back(d);
+            n /= d;
         }
     }
-    return factors;
+    if (n > 1)
+        factorization.push_back(n);
+    return factorization;
 }
 // Prime Factorization
 map<int, int> primeFactorisation(ll n) {
@@ -103,17 +102,56 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    int n;
-    cin >> n;
-    vi factors = factorization<int>(n);
-    for (auto &it)
+    int n, q;
+    cin >> n >> q;
+    vi fac(n + 1, 0);
+    set<int> stt;
+    for (int i = 0; i < q; i++) {
+        string s;
+        int a;
+        cin >> s >> a;
+        int len = s.length();
+        vi fact = trial_division1(a);
+        if (s == "+") {
+            if (stt.count(a)) {
+                cout << "Already on " << nl;
+                continue;
+            }
+            bool ok = true;
+            for (auto &it : fact) {
+                if (fac[it] != a && fac[it] > 0) {
+                    cout << "Conflict with " << fac[it] << nl;
+                    ok = false;
+                    break;
+                }
+            }
+            if (!ok) continue;
+            cout << "Success " << nl;
+            stt.insert(a);
+            for (auto &it : fact) {
+                fac[it] = a;
+                fac[a] = a;
+            }
+        } else {
+            if (!stt.count(a)) {
+                cout << "Already off " << nl;
+                continue;
+            }
+            for (auto &it : fact) {
+                fac[it] = 0;
+            }
+            fac[a] = 0;
+            stt.erase(a);
+            cout << "Success " << nl;
+        }
+    }
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

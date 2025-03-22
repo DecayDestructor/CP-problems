@@ -102,11 +102,43 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+int interactor(int middle, int left) {
+    cout << "? " << middle - left + 1 << " ";
+    for (int i = left; i <= middle; i++) {
+        cout << i << " ";
+    }
+    cout << endl;
+    int s;
+    cin >> s;
+    return s;
+}
 void solve() {
     int n;
     cin >> n;
-    vi factors = factorization<int>(n);
-    for (auto &it)
+    vll arr(n);
+    vi prefix(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+        cin >> arr[i - 1];
+        prefix[i] = prefix[i - 1] + arr[i - 1];
+    }
+    // for (auto &it : prefix) cout << it << " ";
+    // cout << endl;
+    int maxi = -1;
+    int left = 1, right = n;
+    while (left <= right) {
+        int middle = left + (right - left) / 2;
+        int sum = interactor(middle, left);
+        // cout << sum << " : " << prefix[middle] - prefix[left - 1] << endl;
+        if (sum > prefix[middle] - prefix[left - 1]) {
+            // cout << "going inside " << endl;
+            right = middle - 1;
+            maxi = middle;
+        } else {
+            // cout << "going outside " << endl;
+            left = middle + 1;
+        }
+    }
+    cout << "! " << maxi << endl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
