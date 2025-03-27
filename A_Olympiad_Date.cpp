@@ -1,8 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define int long long
+
 #define nl '\n'
 #define loop(s, n) for (ll i = s; i < n; i++)
+#define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
 #define print(ans) cout << ans << nl
@@ -14,28 +15,9 @@ using namespace std;
 #define vvch vector<vector<char>>
 #define vch vector<char>
 template <typename T1, typename T2>
+#define int long long
 using vpp = vector<pair<T1, T2>>;
 ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
-// Template functions for input and output
-template <typename T>
-void inputArray(vector<T> &arr, int n) {
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-    }
-}
-
-void debug(auto &arr) {
-    for (auto &it : arr) {
-        cout << it << " ";
-    }
-    cout << nl;
-}
-template <typename T>
-void outputArray(vector<T> &arr, int n) {
-    for (int i = 0; i < n; i++) {
-        cout << arr[i] << nl;
-    }
-}
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -53,7 +35,8 @@ vector<T> factorization(int n) {
     return factors;
 }
 // Prime Factorization
-void primeFactorisation(ll n, map<ll, ll> &mpp) {
+map<int, int> primeFactorisation(ll n) {
+    map<int, int> mpp;
     for (ll i = 2; i <= sqrt(n); i++) {
         while (n % i == 0) {
             mpp[i]++;
@@ -62,6 +45,7 @@ void primeFactorisation(ll n, map<ll, ll> &mpp) {
     }
     if (n != 1)
         mpp[n]++;
+    return mpp;
 }
 // Sieve of Eratosthenes
 vector<ll> sieveOfEratosthenes(int n) {
@@ -78,7 +62,7 @@ vector<ll> sieveOfEratosthenes(int n) {
 }
 // Sum of first n natural numbers
 ll sumOfNaturalNumbers(ll n) {
-    return (n * (n + 1)) / 2;  // Formula to calculate the sum
+    return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
 bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
@@ -95,53 +79,49 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
-map<int, int> mpp;
-map<int, vector<int>> mid;
-ll helper(ll l, ll r, ll &k, int counter) {
-    if (r - l + 1 < k) {
-        return 0;
-    }
-    // cout << l << " : " << r << nl;
-    ll middle = (l + r) / 2;
-    if ((r - l + 1) % 2 == 0) {
-        // cout << "l to r is even " << nl;
-        return helper(l, middle, k, counter + 1) + helper(middle + 1, r, k, counter + 1);
-    } else {
-        // cout << "adding " << middle << nl;
-        mpp[counter] += middle;
-        mid[counter].push_back(middle);
-        return middle + helper(l, middle - 1, k, counter + 1) + helper(middle + 1, r, k, counter + 1);
-    }
+ll mminvprime(ll a, ll m) {
+    return binpow(a, m - 2, m);
 }
-int sumOfAp(int a, int n) {
-    return 1ll * a * n * n;
+ll mod_add(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a + b) % m) + m) % m;
+}
+ll mod_mul(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a * b) % m) + m) % m;
+}
+ll mod_sub(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a - b) % m) + m) % m;
+}
+ll mod_div(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    ll n, k;
-    cin >> n >> k;
-    int r = n, l = 1;
-    int answer = 0;
-    int level = 1;
-    int counter = 1;
-    cout << helper(1, n, k, counter) << nl;
-    bool oddParent = true;
-    while (r - l + 1 >= k) {
-        if ((r - l + 1) % 2) {
-            cout << "level : " << level << nl;
-            cout << l << " : " << r << " : " << sumOfAp((r + l) / 2, level) << nl;
-            answer += (sumOfAp((r + l) / 2, level));
+    int n;
+    cin >> n;
+    map<int, int> mpp;
+    bool ans = false;
+    int answer = 1e9;
+    for (int i = 0; i < n; i++) {
+        int a;
+        cin >> a;
+        mpp[a]++;
+        if (mpp[0] >= 3 && mpp[1] >= 1 && mpp[3] >= 1 && mpp[5] >= 1 && mpp[2] >= 2) {
+            answer = min(answer, i + 1);
         }
-        r = r / 2;
-        level = level * 2;
     }
-    for (auto &it : mpp) {
-        for (auto &j : mid[it.first]) {
-            cout << j << " ";
-        }
-        cout << " : ";
-        cout << it.first << " : " << it.second << nl;
+    if (answer != 1e9) {
+        cout << answer << nl;
+        return;
     }
-    cout << answer << nl;
+    // for (auto &it : mpp) cout << it.first << " : " << it.second << nl;
+    cout << 0 << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
