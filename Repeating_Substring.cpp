@@ -148,42 +148,37 @@ struct Hashing {
         return hash;
     }
 };
+int MOD = 1e9 + 21;
 void solve() {
     string s;
     cin >> s;
     int n = s.length();
     Hashing hash(s);
-    int index = -1;
-    int left = 0, right = n - 1;
+    int left = 1, right = n;
+    string answer = "";
     while (left <= right) {
-        int i = left + (right - left) / 2;
-        vi arr1 = hash.substringHash(0, i);
-        vi arr2 = hash.substringHash(n - i - 1, n - 1);
-        if (arr1 != arr2) {
-            // right = i - 1;
-            cout << i << nl;
-            left = i + 1;
-            continue;
-        }
-        cout << left << " : " << right << nl;
-        bool found = false;
-        for (int j = 1; j < n - 1 - i; j++) {
-            vi ok = hash.substringHash(j, j + i);
-            if (ok == arr1) {
-                index = i;
-                found = true;
+        int middle = left + (right - left) / 2;
+        unordered_set<int> stt;
+        bool ok = false;
+        for (int i = 0; i + middle - 1 < n; i++) {
+            int uniqueHash = 1ll * hash.substringHash(i, i + middle - 1)[0] * MOD + hash.substringHash(i, i + middle - 1)[1];
+            if (!stt.count(uniqueHash))
+                stt.insert(uniqueHash);
+            else {
+                answer = s.substr(i, middle);
+                ok = true;
+                break;
             }
         }
-        if (found) {
-            left = i + 1;
+        if (ok) {
+            left = middle + 1;
         } else
-            right = i - 1;
+            right = middle - 1;
     }
-    if (index == -1) {
-        cout << "Just a legend" << nl;
-    } else {
-        cout << s.substr(0, index + 1) << nl;
-    }
+    if (answer == "")
+        cout << -1 << nl;
+    else
+        cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

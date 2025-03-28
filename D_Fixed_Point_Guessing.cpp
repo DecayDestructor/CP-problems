@@ -102,87 +102,28 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-struct Hashing {
-    string s;
-    int n;
-    int primes;
-    vector<ll> hashPrimes = {1000000009, 100000007};
-    const ll base = 31;
-    vector<vector<ll>> hashValues;
-    vector<vector<ll>> powersOfBase;
-    vector<vector<ll>> inversePowersOfBase;
-    Hashing(string a) {
-        primes = hashPrimes.size();
-        hashValues.resize(primes);
-        powersOfBase.resize(primes);
-        inversePowersOfBase.resize(primes);
-        s = a;
-        n = s.length();
-        for (int i = 0; i < hashPrimes.size(); i++) {
-            powersOfBase[i].resize(n + 1);
-            inversePowersOfBase[i].resize(n + 1);
-            powersOfBase[i][0] = 1;
-            for (int j = 1; j <= n; j++) {
-                powersOfBase[i][j] = (base * powersOfBase[i][j - 1]) % hashPrimes[i];
-            }
-            inversePowersOfBase[i][n] = mminvprime(powersOfBase[i][n], hashPrimes[i]);
-            for (int j = n - 1; j >= 0; j--) {
-                inversePowersOfBase[i][j] = mod_mul(inversePowersOfBase[i][j + 1], base, hashPrimes[i]);
-            }
-        }
-        for (int i = 0; i < hashPrimes.size(); i++) {
-            hashValues[i].resize(n);
-            for (int j = 0; j < n; j++) {
-                hashValues[i][j] = ((s[j] - 'a' + 1LL) * powersOfBase[i][j]) % hashPrimes[i];
-                hashValues[i][j] = (hashValues[i][j] + (j > 0 ? hashValues[i][j - 1] : 0LL)) % hashPrimes[i];
-            }
-        }
+vi interactor(int left, int right) {
+    cout << "? " << left << " " << right << endl;
+    vi arr;
+    for (int i = left; i < right; i++) {
+        int a;
+        cin >> a;
+        arr.push_back(a);
     }
-    vector<ll> substringHash(int l, int r) {
-        vector<ll> hash(primes);
-        for (int i = 0; i < primes; i++) {
-            ll val1 = hashValues[i][r];
-            ll val2 = l > 0 ? hashValues[i][l - 1] : 0LL;
-            hash[i] = mod_mul(mod_sub(val1, val2, hashPrimes[i]), inversePowersOfBase[i][l], hashPrimes[i]);
-        }
-        return hash;
-    }
-};
+    return arr;
+}
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    Hashing hash(s);
-    int index = -1;
-    int left = 0, right = n - 1;
+    int n;
+    int left = 1, right = n;
     while (left <= right) {
-        int i = left + (right - left) / 2;
-        vi arr1 = hash.substringHash(0, i);
-        vi arr2 = hash.substringHash(n - i - 1, n - 1);
-        if (arr1 != arr2) {
-            // right = i - 1;
-            cout << i << nl;
-            left = i + 1;
-            continue;
-        }
-        cout << left << " : " << right << nl;
-        bool found = false;
-        for (int j = 1; j < n - 1 - i; j++) {
-            vi ok = hash.substringHash(j, j + i);
-            if (ok == arr1) {
-                index = i;
-                found = true;
+        int middle = left + (right - left) / 2;
+        vi arr = interactor(left, middle);
+        if ((middle - left + 1) % 2 == 1) {
+            for (auto &it : arr) {
+                if (it)
             }
+        } else {
         }
-        if (found) {
-            left = i + 1;
-        } else
-            right = i - 1;
-    }
-    if (index == -1) {
-        cout << "Just a legend" << nl;
-    } else {
-        cout << s.substr(0, index + 1) << nl;
     }
 }
 signed main() {
@@ -190,7 +131,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }
