@@ -65,7 +65,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -103,27 +103,22 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    int index = n;
-    for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch - '0' == 0) {
-            index = i;
-            break;
-        }
+    int n = 0;
+    cin >> n;
+    vector<int> inp;
+    inp.assign(n, 0);
+    for (auto& x : inp) cin >> x;
+    sort(inp.begin(), inp.end());
+    if (inp.back() == inp[0]) {
+        cout << "-1\n";
+        return;
+    } else {
+        int it = 0;
+        while (inp[it] == inp[0]) it++;
+        cout << it << " " << n - it << "\n";
+        for (int j = 0; j < it; ++j) cout << inp[j] << " ";
+        for (int j = it; j < n; ++j) cout << inp[j] << " ";
     }
-    string req = s.substr(index, n - index + 1);
-    for (char &ch : req) {
-        if (ch == '0')
-            ch = '1';
-        else
-            ch = '0';
-    }
-    int l = req.length();
-    int start = 1, end = 1;
-    int l1 = 0, l2 = 0;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

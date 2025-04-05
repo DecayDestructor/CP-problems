@@ -103,27 +103,23 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    int index = n;
+    int n;
+    cin >> n;
+    vll arr;
+    set<int> stt;
     for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch - '0' == 0) {
-            index = i;
-            break;
-        }
+        int a;
+        cin >> a;
+        if (!stt.count(a)) arr.push_back(a);
+        stt.insert(a);
     }
-    string req = s.substr(index, n - index + 1);
-    for (char &ch : req) {
-        if (ch == '0')
-            ch = '1';
-        else
-            ch = '0';
+    sort(all(arr));
+    int maxi = -1;
+    for (auto &it : arr) {
+        int base = it + n;
+        maxi = max((int)(lower_bound(all(arr), base) - arr.begin()), maxi);
     }
-    int l = req.length();
-    int start = 1, end = 1;
-    int l1 = 0, l2 = 0;
+    cout << maxi << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

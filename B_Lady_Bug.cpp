@@ -103,27 +103,41 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    int index = n;
+    int n;
+    cin >> n;
+    string a, b;
+    cin >> a >> b;
+    int oddCounter = 0, evenCounter = 0;
     for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch - '0' == 0) {
-            index = i;
-            break;
+        if (b[i] == '0') {
+            if (i % 2 == 0) {
+                oddCounter++;
+            } else
+                evenCounter++;
         }
     }
-    string req = s.substr(index, n - index + 1);
-    for (char &ch : req) {
-        if (ch == '0')
-            ch = '1';
-        else
-            ch = '0';
+    // cout << oddCounter << "  : " << evenCounter << nl;
+    for (int i = 0; i < n; i++) {
+        if (a[i] == '1') {
+            if (i % 2 == 0) {
+                if (evenCounter >= 1) {
+                    evenCounter--;
+                } else {
+                    pn;
+                    return;
+                }
+            } else {
+                if (oddCounter >= 1)
+                    oddCounter--;
+                else {
+                    // cout << i << nl;
+                    pn;
+                    return;
+                }
+            }
+        }
     }
-    int l = req.length();
-    int start = 1, end = 1;
-    int l1 = 0, l2 = 0;
+    py;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

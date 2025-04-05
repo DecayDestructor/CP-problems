@@ -103,27 +103,63 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    int index = n;
-    for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch - '0' == 0) {
-            index = i;
-            break;
+    int n, x, y;
+    // cout << "new testcase" << nl;
+    cin >> n >> x >> y;
+    // cout << n << nl;
+    vll arr(n);
+    // for (auto &it : arr) cin >> it;
+    vi answer(n, -1);
+    answer[0] = 0;
+    if (n % 2) {
+        if ((y - x) % 2) {
+            for (int i = 1; i < n - 1; i++) {
+                if (answer[i - 1] == 1) {
+                    answer[i] = 0;
+                } else
+                    answer[i] = 1;
+            }
+            answer[n - 1] = 2;
+        } else {
+            answer[1] = 2;
+            for (int i = 2; i < n; i++) {
+                if (answer[i - 1] == 1) {
+                    answer[i] = 0;
+                } else
+                    answer[i] = 1;
+            }
+        }
+    } else {
+        if ((y - x) % 2) {
+            for (int i = 1; i < n; i++) {
+                if (answer[i - 1] == 1) {
+                    answer[i] = 0;
+                } else
+                    answer[i] = 1;
+            }
+        } else {
+            answer[1] = 2;
+            for (int i = 2; i < n; i++) {
+                if (answer[i - 1] == 1) {
+                    answer[i] = 0;
+                } else
+                    answer[i] = 1;
+            }
+            answer[n - 1] = 2;
         }
     }
-    string req = s.substr(index, n - index + 1);
-    for (char &ch : req) {
-        if (ch == '0')
-            ch = '1';
-        else
-            ch = '0';
+    // for (auto &it : mpp) answer[it.first] = it.second;
+    // for (auto &it : answer) cout
+    //                             << it << " ";
+    // cout << nl;
+    map<int, int> mpp;
+    for (auto &it : answer) {
+        mpp[(x - 1) % n] = it;
+        x++;
     }
-    int l = req.length();
-    int start = 1, end = 1;
-    int l1 = 0, l2 = 0;
+    for (auto &it : mpp) answer[it.first] = it.second;
+    for (auto &it : answer) cout << it << " ";
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

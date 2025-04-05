@@ -103,27 +103,39 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string s;
-    cin >> s;
-    int n = s.length();
-    int index = n;
+    int n;
+    cin >> n;
+    map<int, int> mpp;
+    vi arr(n);
     for (int i = 0; i < n; i++) {
-        char ch = s[i];
-        if (ch - '0' == 0) {
-            index = i;
-            break;
+        int a;
+        cin >> a;
+        mpp[a]++;
+        arr[i] = a;
+    }
+    vi temp;
+    for (auto &it : arr) {
+        if (mpp[it] > 1) {
+            while (mpp[it]) {
+                temp.push_back(it);
+                mpp[it]--;
+            }
         }
     }
-    string req = s.substr(index, n - index + 1);
-    for (char &ch : req) {
-        if (ch == '0')
-            ch = '1';
-        else
-            ch = '0';
+    if (temp.size() < 8) {
+        pn;
+        return;
     }
-    int l = req.length();
-    int start = 1, end = 1;
-    int l1 = 0, l2 = 0;
+    sort(all(temp));
+    vi fin;
+    for (int i = 0; i < 4; i += 2) {
+        fin.push_back(temp[i]);
+    }
+    for (int i = temp.size() - 4; i < temp.size(); i += 2) {
+        fin.push_back(temp[i]);
+    }
+    py;
+    cout << fin[0] << " " << fin[1] << " " << fin[0] << " " << fin[3] << " " << fin[2] << " " << fin[1] << " " << fin[2] << " " << fin[3] << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
