@@ -103,31 +103,38 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
+    int q;
+    cin >> q;  // 1 = s, 2 = t
+    int nonA1 = 0, nonA2 = 0;
+    int len1 = 1, len2 = 1;
+    while (q--) {
+        int d, k;
+        string x;
+        cin >> d >> k >> x;
+        for (char &ch : x) {
+            if (ch != 'a') {
+                if (d == 1)
+                    nonA1 = 1;
+                else
+                    nonA2 = 1;
             }
         }
+        if (d == 1) {
+            len1 += (k * x.length());
+        } else
+            len2 += (k * x.length());
+        if (!nonA1 && !nonA2) {
+            if (len1 < len2) {
+                py;
+            } else
+                pn;
+        } else {
+            if (nonA1 && !nonA2) {
+                pn;
+            } else
+                py;
+        }
     }
-    cout << ans << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

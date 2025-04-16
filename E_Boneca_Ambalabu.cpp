@@ -79,6 +79,15 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
+ll power(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1) res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
+}
 ll mminvprime(ll a, ll m) {
     return binpow(a, m - 2, m);
 }
@@ -103,31 +112,35 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
-            }
+    int n;
+    cin >> n;
+    vi arr(n);
+    vi mpp(32);
+    for (auto &it : arr) {
+        cin >> it;
+        int temp = it;
+        int index = 0;
+        while (temp) {
+            mpp[index++] += temp & 1;
+            temp /= 2;
         }
     }
-    cout << ans << nl;
+    int answer = 0;
+    for (auto &it : arr) {
+        int maxi = 0;
+        int k = it;
+        for (int i = 0; i < 32; i++) {
+            int base = power(2, i);
+            if (k & 1) {
+                maxi += ((n - mpp[i]) * base);
+            } else {
+                maxi += mpp[i] * base;
+            }
+            k = k / 2;
+        }
+        answer = max(maxi, answer);
+    }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

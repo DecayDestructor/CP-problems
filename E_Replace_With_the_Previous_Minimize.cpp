@@ -103,31 +103,36 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
+    int n, k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
+    vi alpha(26, 0);
+    int index = 0;
+    char maxi = 'a';
+    char low_temp, upper_temp;
+    while (index < n && k > 0) {
+        char &ch = s[index++];
+        if (ch <= maxi) {
+            ch = 'a';
+        } else {
+            if (k >= ch - maxi) {
+                k -= (ch - maxi);
+                maxi = ch;
+            } else {
+                low_temp = ch - k;
+                upper_temp = ch;
+                k = 0;
             }
         }
     }
-    cout << ans << nl;
+    for (char &ch : s) {
+        if (ch <= maxi)
+            ch = 'a';
+        else if (ch >= low_temp && ch <= upper_temp)
+            ch = low_temp;
+    }
+    cout << s << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

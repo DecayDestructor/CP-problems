@@ -79,6 +79,15 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
+ll binpow(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1) res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
+}
 ll mminvprime(ll a, ll m) {
     return binpow(a, m - 2, m);
 }
@@ -102,32 +111,40 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-void solve() {
-    string x;
+int counter = 0;
+int interactor(int node, int parent) {
+    counter++;
+    cout << "? " << parent << " " << node << endl;
+    int x;
     cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
-            }
+    return x;
+}
+void helper(vector<pair<int, int>> &answers, int parent, int node, vi &visited) {
+    if (visited[node]) return;
+    int x = interactor(node, parent);
+    if (x == parent) {
+        answers.push_back({parent, node});
+        visited[node] = 1;
+        return;
+    }
+    helper(answers, parent, x, visited);
+    helper(answers, x, node, visited);
+}
+void solve() {
+    int n;
+    cin >> n;
+    counter = 0;
+    vi visited(n + 1, 0);
+    vector<pair<int, int>> answers;
+    for (int i = 2; i <= n; i++) {
+        if (!visited[i]) {
+            helper(answers, 1, i, visited);
         }
     }
-    cout << ans << nl;
+    cout << "! ";
+    for (auto &it : answers) cout << it.first << " " << it.second << " ";
+    cout << endl;
+    return;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

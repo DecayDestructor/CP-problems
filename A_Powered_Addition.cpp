@@ -79,6 +79,15 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
+ll binpow(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1) res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
+}
 ll mminvprime(ll a, ll m) {
     return binpow(a, m - 2, m);
 }
@@ -102,32 +111,30 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+int log2(int n) {
+    int curr = 1;
+    int answer = 1;
+    while (curr < n) {
+        answer++;
+        curr = curr << 1;
+    }
+    return answer;
+}
 void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
-            }
+    int n;
+    cin >> n;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    int answer = 0;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < arr[i - 1]) {
+            int req = log2(arr[i - 1] - arr[i]);
+            cout << arr[i] << " : " << req << nl;
+            answer += max(req - answer, 0ll);
+            arr[i] += binpow(2, req - 1);
         }
     }
-    cout << ans << nl;
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

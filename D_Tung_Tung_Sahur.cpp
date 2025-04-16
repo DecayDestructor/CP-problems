@@ -103,31 +103,33 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
-            }
+    string p, s;
+    cin >> p >> s;
+    int plen = p.length();
+    int slen = s.length();
+    int sl = 0, sr = 0;
+    int pl = 0, pr = 0;
+    while (sr < slen) {
+        while (sr < slen && s[sr] == s[sl]) {
+            sr++;
         }
+        int counter1 = sr - sl;
+        while (pr < plen && p[pr] == p[pl]) {
+            pr++;
+        }
+        int counter2 = pr - pl;
+        if (s[sl] != p[pl]) {
+            pn;
+            return;
+        } else if (counter1 > 2 * counter2 || counter1 < counter2) {
+            pn;
+            return;
+        }
+        pl = pr;
+        sl = sr;
     }
-    cout << ans << nl;
+
+    py;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

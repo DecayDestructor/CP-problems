@@ -34,7 +34,7 @@ vector<T> factorization(int n) {
     }
     return factors;
 }
-// Prime Factorization
+
 map<int, int> primeFactorisation(ll n) {
     map<int, int> mpp;
     for (ll i = 2; i <= sqrt(n); i++) {
@@ -47,40 +47,40 @@ map<int, int> primeFactorisation(ll n) {
         mpp[n]++;
     return mpp;
 }
-// Sieve of Eratosthenes
+
 vector<ll> sieveOfEratosthenes(int n) {
     vector<ll> sieve(n + 1, 1);
-    sieve[0] = sieve[1] = 0;  // 0 and 1 are not primes
+    sieve[0] = sieve[1] = 0;
     for (int i = 2; i * i <= n; i++) {
         if (sieve[i]) {
             for (int j = i * i; j <= n; j += i) {
-                sieve[j] = 0;  // Mark multiples of i as non-prime
+                sieve[j] = 0;
             }
         }
     }
-    return sieve;  // Return the sieve vector
+    return sieve;
 }
-// Sum of first n natural numbers
+
 ll sumOfNaturalNumbers(ll n) {
-    return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
+    return (1LL * n * (n + 1)) / 2;
 }
-// DFS Traversal Validation
+
 bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
-// Binary Exponentiation
-ll binpow(ll a, ll b, ll m) {
-    a %= m;
+
+ll power(ll a, ll b) {
     ll res = 1;
     while (b > 0) {
-        if (b & 1) res = res * a % m;
-        a = a * a % m;
-        b >>= 1;
+        if (b % 2 == 1)
+            res *= a;
+        a *= a;
+        b /= 2;
     }
     return res;
 }
 ll mminvprime(ll a, ll m) {
-    return binpow(a, m - 2, m);
+    return power(a, m - 2);
 }
 ll mod_add(ll a, ll b, ll m) {
     a = a % m;
@@ -102,39 +102,100 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+
+ll get_num(ll n, ll x, ll y) {
+    ll res = 0;
+    ll pow4 = power(4, n - 1);
+
+    for (ll lvl = n; lvl > 0; --lvl) {
+        ll size = power(2, lvl);
+        ll half = size / 2;
+
+        if (x <= half && y <= half) {
+        } else if (x > half && y > half) {
+            res += pow4;
+            x -= half;
+            y -= half;
+        } else if (x > half && y <= half) {
+            res += 2 * pow4;
+            x -= half;
+        } else {
+            res += 3 * pow4;
+            y -= half;
+        }
+
+        pow4 /= 4;
+    }
+
+    ll offset = 1;
+    if (x == 2 && y == 2)
+        offset = 2;
+    else if (x == 2 && y == 1)
+        offset = 3;
+    else if (x == 1 && y == 2)
+        offset = 4;
+
+    return res + offset;
+}
+
+pair<ll, ll> get_pos(ll n, ll d) {
+    ll x = 1, y = 1;
+    ll remain = d;
+    ll pow4 = power(4, n - 1);
+
+    for (ll lvl = n; lvl > 0; --lvl) {
+        ll size = power(2, lvl);
+        ll half = size / 2;
+
+        if (remain <= pow4) {
+        } else if (remain <= 2 * pow4) {
+            x += half;
+            y += half;
+            remain -= pow4;
+        } else if (remain <= 3 * pow4) {
+            x += half;
+            remain -= 2 * pow4;
+        } else {
+            y += half;
+            remain -= 3 * pow4;
+        }
+
+        pow4 /= 4;
+    }
+
+    return {x, y};
+}
+
 void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
-            }
+    ll n, q;
+    cin >> n >> q;
+
+    while (q--) {
+        string queryType;
+        cin >> queryType;
+
+        if (queryType == "->") {
+            ll x, y;
+            cin >> x >> y;
+            ll ans = get_num(n, x, y);
+            cout << ans << nl;
+        } else if (queryType == "<-") {
+            ll d;
+            cin >> d;
+            pair<ll, ll> coords = get_pos(n, d);
+            cout << coords.first << " " << coords.second << nl;
         }
     }
-    cout << ans << nl;
 }
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
+
     int t = 1;
     cin >> t;
+
     while (t--) {
         solve();
     }

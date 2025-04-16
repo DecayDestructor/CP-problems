@@ -9,6 +9,7 @@
     "initializer_list": "cpp",
     "valarray": "cpp",
     "cstdlib": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "iomanip": "cpp"
   }
 }

@@ -102,32 +102,30 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
-            }
-        }
+bool helper(int middle, vi &arr, int k, int n) {
+    int counter = 0;
+    vi visited(2e5 + 1, 0);
+    bool flag = false;
+    for (int i = 0; i < n; i++) {
+        
     }
-    cout << ans << nl;
+}
+void solve() {
+    int n, k;
+    cin >> n >> k;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    int left = 1, right = n + 1;
+    int answer = 0;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (helper(mid, arr, k, n)) {
+            answer = max(answer, mid);
+            left = mid + 1;
+        } else
+            right = mid - 1;
+    }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

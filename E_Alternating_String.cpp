@@ -103,31 +103,59 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 void solve() {
-    string x;
-    cin >> x;
-    int k;
-    cin >> k;
-    int n = x.size();
-    vector<vector<int>> pos(10);
-    for (int i = 0; i < n; ++i)
-        pos[x[i] - '0'].push_back(i);
-    for (int i = 0; i < 10; ++i)
-        reverse(pos[i].begin(), pos[i].end());
-    string ans;
-    int lst = 0, len = n - k;
-    for (int i = 0; i < len; ++i) {
-        for (int d = (i == 0); d <= 9; ++d) {
-            while (!pos[d].empty() && pos[d].back() < lst)
-                pos[d].pop_back();
-            if (!pos[d].empty() && pos[d].back() - lst <= k) {
-                ans += d + '0';
-                k -= pos[d].back() - lst;
-                lst = pos[d].back() + 1;
-                break;
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    if (n % 2 == 0) {
+        map<char, int> odd, even;
+        for (int i = 0; i < n; i++) {
+            if (i % 2)
+                odd[s[i]]++;
+            else
+                even[s[i]]++;
+        }
+        int maxiOdd = -1, maxiEven = -1;
+        for (auto &it : odd) maxiOdd = max(maxiOdd, it.second);
+        for (auto &it : even) maxiEven = max(maxiEven, it.second);
+        cout << n - (maxiEven + maxiOdd) << nl;
+
+    } else {
+        cout << "odd" << nl;
+        vector<pair<char, int>> preEven(n + 1), sufEven(n + 1);
+        vi preCounter(26), sufCounter(26);
+        for (int i = 1; i <= n; i += 2) {
+            preCounter[s[i - 1] - 'a']++;
+            if (preCounter[s[i - 1] - 'a'] > preEven[i - 1].second) {
+                preEven[i] = {s[i - 1], preCounter[s[i - 1] - 'a']};
+            } else {
+                preEven[i] = preEven[i - 1];
             }
         }
+        for (auto it = preEven.begin(); it != preEven.end(); ++it) {
+            if (it->first == 0 && it != preEven.begin()) {
+                *it = *(prev(it));
+            }
+            cout << it->first << " " << it->second << nl;
+        }
+        vector<pair<char, int>> preOdd(n + 1), sufOdd(n + 1);
+        preCounter.assign(26, 0);
+        sufCounter.assign(26, 0);
+        for (int i = n; i >= 0; i -= 2) {
+            sufCounter[s[i - 1] - 'a']++;
+            if (sufCounter[s[i - 1] - 'a'] > sufOdd[i - 1].second) {
+                preEven[i] = {s[i - 1], preCounter[s[i - 1] - 'a']};
+            } else {
+                preEven[i] = preEven[i - 1];
+            }
+        }
+        for (auto it = preEven.begin(); it != preEven.end(); ++it) {
+            if (it->first == 0 && it != preEven.begin()) {
+                *it = *(prev(it));
+            }
+            cout << it->first << " " << it->second << nl;
+        }
     }
-    cout << ans << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

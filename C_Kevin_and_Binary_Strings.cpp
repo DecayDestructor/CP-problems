@@ -124,6 +124,7 @@ void solve() {
     int l = req.length();
     int start = 1, end = 1;
     int l1 = 0, l2 = 0;
+    int len =
 }
 signed main() {
     ios_base::sync_with_stdio(false);
