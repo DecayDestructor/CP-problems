@@ -113,24 +113,49 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, x;
-    cin >> n >> x;
-    int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
+    ll n;
+    cin >> n;
+    string s;
+    cin >> s;
+    ll n_a = 0, n_s = 0;
+    for (auto x : s) {
+        if (x == '+')
+            n_a++;
+        else
+            n_s++;
+    }
+    ll q, x = max(n_a, n_s), y = min(n_a, n_s);
+    cin >> q;
+    while (q--) {
+        ll a, b;
+        cin >> a >> b;
+        ll num = (x * min(a, b) - y * max(a, b));
+        ll deno = min(a, b) - max(a, b);
+        if (x == y or num == 0) {
+            cout << "YES" << endl;
+        } else if (deno == 0) {
+            cout << "NO" << endl;
+        } else {
+            if (abs(num) % abs(deno) == 0) {
+                int k = num / deno;
+                if (k >= 0 && k <= y) {
+                    cout << "YES" << endl;
+                } else {
+                    cout << "NO" << endl;
+                }
+            } else {
+                cout << "NO" << endl;
+            }
         }
     }
-    cout << answer << nl;
+    return;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

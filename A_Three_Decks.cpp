@@ -112,19 +112,28 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+
 void solve() {
-    int n, x;
-    cin >> n >> x;
-    int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
-        }
+    ll a, b, c;
+    cin >> a >> b >> c;
+    ll sum = a + b + c;
+    if (sum % 3 != 0) {
+        pn;
+        return;
     }
-    cout << answer << nl;
+    ll f = sum / 3;
+    if (f < a || f < b) {
+        pn;
+        return;
+    }
+    ll cn = 2ll * f - (a + b);
+    if (cn <= c) {
+        py;
+    } else {
+        pn;
+    }
 }
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

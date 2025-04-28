@@ -2,7 +2,6 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -11,12 +10,24 @@ using namespace std;
 #define ll long long
 #define vll vector<ll>
 #define vi vector<int>
+#define vvi vector<vi>
+#define rall(v) v.rbegin(), v.rend()
+#define loop(i, a, b) for (int i = a; i < b; i++)
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
 using vpp = vector<pair<T1, T2>>;
+#define pii pair<int, int>
+#define vpii vector<pii>
+#define pb push_back
+
+template <typename T>
+using minheap = priority_queue<T, vector<T>, greater<T>>;
+
+template <typename T>
+using maxheap = priority_queue<T>;
 ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
@@ -112,25 +123,68 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+
 void solve() {
-    int n, x;
-    cin >> n >> x;
-    int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
+    int n, k;
+    cin >> n >> k;
+    string str;
+    cin >> str;
+
+    vi suff(n + 2, 0), next(k, n + 1);
+    suff[n] = 1;
+
+    for (int i = n - 1; i >= 0; i--) {
+        next[str[i] - 'a'] = i;
+        bool flag = false;
+        int smallest = 1e10;
+
+        for (int ch = 0; ch < k; ch++) {
+            if (next[ch] > n - 1) {
+                flag = true;
+                break;
+            }
+            smallest = min(smallest, suff[next[ch] + 1]);
+        }
+        if (flag)
+            suff[i] = 1;
+        else
+            suff[i] = smallest + 1;
+    }
+
+    vvi positions(k);
+    loop(i, 0, n) {
+        positions[str[i] - 'a'].pb(i);
+    }
+
+    int q;
+    cin >> q;
+    while (q--) {
+        string p;
+        cin >> p;
+        int i = 0;
+        bool check = false;
+
+        for (auto &ch : p) {
+            auto it = lower_bound(all(positions[ch - 'a']), i);
+
+            if (it == positions[ch - 'a'].end()) {
+                cout << 0 << nl;
+                check = true;
+                break;
+            }
+            i = *it + 1;
+        }
+        if (!check) {
+            cout << suff[i] << nl;
         }
     }
-    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

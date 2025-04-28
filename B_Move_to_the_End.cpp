@@ -112,18 +112,38 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-void solve() {
-    int n, x;
-    cin >> n >> x;
-    int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
-        }
+struct cmp {
+    bool operator()(pair<int, int> a, pair<int, int> b) const {
+        if (a.first != b.first) return a.first > b.first;
+        return a.second > b.second;
     }
-    cout << answer << nl;
+};
+void solve() {
+    int n;
+    cin >> n;
+    vi arr(n);
+    set<pair<int, int>, cmp> stt;
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+        // pq.push({arr[i], i});
+        stt.insert({arr[i], i});
+    }
+    vi suffix(n + 1, 0);
+    for (int i = n - 1; i >= 0; i--) {
+        suffix[i] = suffix[i + 1] + arr[i];
+    }
+    for (int i = n - 1; i >= 0; i--) {
+        int answer = 0;
+        auto curr = stt.begin();
+        stt.erase({arr[i], i});
+        if (curr->first >= arr[i]) {
+            answer = curr->first + suffix[i + 1];
+        } else {
+            answer = suffix[i];
+        }
+        cout << answer << " ";
+    }
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

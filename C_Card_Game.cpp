@@ -113,17 +113,38 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, x;
-    cin >> n >> x;
-    int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int alice = 0, bob = 0;
+    for (int i = 0; i < n; i++) {
+        if (s[i] == 'A')
+            alice++;
+        else
+            bob++;
+    }
+    // cout << alice << " : " << bob << nl;
+    if (s[0] == s[n - 1]) {
+        if (s[0] == 'A')
+            cout << "Alice" << nl;
+        else
+            cout << "Bob" << nl;
+        return;
+    } else if (s[0] == 'A') {  // bob ke paas n and alice ke paas 1
+        if (bob > 1) {
+            cout << "Bob" << nl;
+        } else
+            cout << "Alice" << nl;
+        return;
+    } else {  // bob ke paas 1 and alice ke paas n
+        if (s[n - 2] == 'A') {
+            cout << "Alice" << nl;
+            return;
+        } else {
+            cout << "Bob" << nl;
         }
     }
-    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

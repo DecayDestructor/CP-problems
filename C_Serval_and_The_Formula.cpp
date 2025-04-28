@@ -113,17 +113,17 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, x;
-    cin >> n >> x;
-    int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
-        }
+    int x, y;
+    cin >> x >> y;
+    int answer = binpow(2, 50) - max(x, y);
+    if (x == y) {
+        cout << -1 << nl;
+        return;
     }
-    cout << answer << nl;
+    if (((x + answer) + (y + answer)) == ((x + answer) ^ (y + answer))) {
+        cout << answer << nl;
+    } else
+        cout << -1 << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

@@ -58,8 +58,13 @@ vector<ll> sieveOfEratosthenes(int n) {
             }
         }
     }
-    return sieve;  // Return the sieve vector
+    vector<ll> primes;
+    for (int i = 2; i <= n; i++) {
+        if (sieve[i]) primes.push_back(i);
+    }
+    return primes;  // Return the list of prime numbers
 }
+
 // Sum of first n natural numbers
 ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
@@ -112,15 +117,25 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+vi sieve;
 void solve() {
-    int n, x;
-    cin >> n >> x;
+    int n;
+    cin >> n;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    sort(all(arr), RSORT);
+    int rem = 0;
     int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
+    for (int i = 0; i < n; i++) {
+        // if (arr[i] == sieve[i]) continue;
+        if (arr[i] >= sieve[i]) {
+            rem += (arr[i] - sieve[i]);
+        } else {
+            if (sieve[i] - arr[i] <= rem) {
+                rem -= (sieve[i] - arr[i]);
+            } else {
+                answer++;
+            }
         }
     }
     cout << answer << nl;
@@ -131,6 +146,7 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
+    sieve = sieveOfEratosthenes(8 * 1e6);
     while (t--) {
         solve();
     }

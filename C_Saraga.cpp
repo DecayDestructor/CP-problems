@@ -113,24 +113,30 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, x;
-    cin >> n >> x;
-    int answer = 0;
-    
-    for (int a = 1; a <= n; a++) {
-        for (int b = 1; a * b <= n && a + b <= x; b++) {
-            int req = min(((n - a * b) / (a + b)), x - b - a);
-            answer += req;
+    string s, t;
+    cin >> s >> t;
+    int sl = s.length();
+    int tl = t.length();
+    int s_index = 1, t_index = tl - 2;
+    // stack<char> s_char, t_char;
+    int sans = 0, tans;
+    vch s1, t1;
+    s1.push_back(s[0]);
+    t1.push_back(t[tl - 1]);
+    vi salpha(26, -1);
+    vi talpha(26, -1);
+    while (s_index < sl || t_index < tl) {
+        if (s_index < sl && talpha[s[s_index]] != -1) {  // s ka character has appeared in t before
+            if (s_index + 1 + tl - talpha[s[s_index]] + 1)
         }
     }
-    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }
