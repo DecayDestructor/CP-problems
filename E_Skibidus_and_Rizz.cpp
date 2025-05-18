@@ -113,81 +113,28 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n;
-    string s;
-    cin >> n >> s;
-    vector<vi> preOdd(n + 1, vi(26));
-    vector<vi> preEven(n + 1, vi(26));
-    if (n % 2 == 0) {
-        vi temp(26, 0);
-        int evenMax = 0;
-        int oddMax = 0;
-        for (int i = 0; i < n; i += 2) {
-            temp[s[i] - 'a']++;
-            evenMax = max(evenMax, temp[s[i] - 'a']);
-        }
-        temp.assign(26, 0);
-        for (int i = 1; i < n; i += 2) {
-            temp[s[i] - 'a']++;
-            oddMax = max(oddMax, temp[s[i] - 'a']);
-        }
-        cout << n - oddMax - evenMax << nl;
+    int n, m, k;
+    cin >> n >> m >> k;
+    if (k < abs(n - m) || k > max(n, m)) {
+        cout << -1 << nl;
         return;
     }
-    for (int i = 1; i <= n; i++) {
-        if (i % 2) {
-            preOdd[i] = preOdd[i - 1];
-            preOdd[i][s[i - 1] - 'a'] = preOdd[i - 1][s[i - 1] - 'a'] + 1;
-        } else
-            preOdd[i] = preOdd[i - 1];
+    pair<int, int> use1 = {n, 0}, use2 = {m, 1};
+    if (m > n) swap(use1, use2);
+    for (int i = 0; i < k; i++) {
+        cout << use1.second;
+        use1.first--;
     }
-    for (int i = 1; i <= n; i++) {
-        if (i % 2 == 0) {
-            preEven[i] = preEven[i - 1];
-            preEven[i][s[i - 1] - 'a'] = preEven[i - 1][s[i - 1] - 'a'] + 1;
-        } else
-            preEven[i] = preEven[i - 1];
+    while (use2.first > 0) {
+        cout << use2.second;
+        use2.first--;
+        swap(use1, use2);
     }
-    int answer = n;
-    for (int i = 2; i < n; i++) {
-        vi evenTemp = preEven[n];
-        vi oddTemp = preOdd[n];
-        if (i % 2 == 0) {
-            for (int j = 0; j < 26; j++) {
-                evenTemp[j] -= preEven[i][j];
-                evenTemp[j] += preOdd[i - 1][j];
-                oddTemp[j] += preEven[i - 2][j];
-                oddTemp[j] -= preOdd[i - 1][j];
-            }
-        } else {
-            for (int j = 0; j < 26; j++) {
-                oddTemp[j] -= preOdd[i][j];
-                oddTemp[j] += preEven[i - 1][j];
-                evenTemp[j] += preOdd[i - 2][j];
-                evenTemp[j] -= preEven[i - 1][j];
-            }
-        }
-        int evenMax = *max_element(all(evenTemp));
-        int oddMax = *max_element(all(oddTemp));
-        answer = min(answer, n - 1 - evenMax - oddMax);
+    while (use1.first > 0) {
+        cout << use1.second;
+        use1.first--;
     }
-    // deleting first index
-    vi evenTemp = preEven[n];
-    vi oddTemp = preOdd[n];
-    for (int i = 0; i < 26; i++) {
-        evenTemp[i] -= preEven[1][i];
-        oddTemp[i] -= preOdd[1][i];
-    }
-    int evenMax = *max_element(all(evenTemp));
-    int oddMax = *max_element(all(oddTemp));
-    answer = min(answer, n - 1 - evenMax - oddMax);
-    // deleting last index
-    evenTemp = preEven[n - 1];
-    oddTemp = preOdd[n - 1];
-    evenMax = *max_element(all(evenTemp));
-    oddMax = *max_element(all(oddTemp));
-    answer = min(answer, n - 1 - evenMax - oddMax);
-    cout << answer + 1 << nl;
+    cout << "\n";
 }
 signed main() {
     ios_base::sync_with_stdio(false);

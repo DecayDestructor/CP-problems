@@ -112,82 +112,64 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+const int MOD = 998244353;
+
+int helper(int root, vector<int> &dp, vector<int> &par, vector<vector<int>> &levels, int current_level, int max_level) {
+    if (current_level > max_level || levels[current_level].empty()) return 0;
+    if (dp[root] != 0) return dp[root];
+
+    for (auto &it : levels[current_level + 1]) {
+        if (par[it] != root) {
+            dp[root] = mod_add(helper(it, dp, par, levels, current_level + 1, max_level), dp[root], MOD);
+        }
+    }
+
+    dp[root] = mod_add(dp[root], 1, MOD);
+    return dp[root];
+}
+
 void solve() {
     int n;
-    string s;
-    cin >> n >> s;
-    vector<vi> preOdd(n + 1, vi(26));
-    vector<vi> preEven(n + 1, vi(26));
-    if (n % 2 == 0) {
-        vi temp(26, 0);
-        int evenMax = 0;
-        int oddMax = 0;
-        for (int i = 0; i < n; i += 2) {
-            temp[s[i] - 'a']++;
-            evenMax = max(evenMax, temp[s[i] - 'a']);
+    cin >> n;
+
+    vector<int> par(n + 1, 0);
+    vector<int> lvls(n + 1, 0);
+    vector<vector<int>> adj(n + 1);
+
+    lvls[1] = 1;
+
+    for (int i = 2; i <= n; i++) {
+        int parent;
+        cin >> parent;
+        par[i] = parent;
+        adj[parent].push_back(i);
+    }
+
+    int max_level = 1;
+    vector<vector<int>> levels(n + 2);
+    levels[1].push_back(1);
+
+    queue<int> q;
+    q.push(1);
+
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+        int curr_level = lvls[node];
+
+        for (auto &it : adj[node]) {
+            lvls[it] = curr_level + 1;
+            levels[curr_level + 1].push_back(it);
+            max_level = max(max_level, curr_level + 1);
+            q.push(it);
         }
-        temp.assign(26, 0);
-        for (int i = 1; i < n; i += 2) {
-            temp[s[i] - 'a']++;
-            oddMax = max(oddMax, temp[s[i] - 'a']);
-        }
-        cout << n - oddMax - evenMax << nl;
-        return;
     }
-    for (int i = 1; i <= n; i++) {
-        if (i % 2) {
-            preOdd[i] = preOdd[i - 1];
-            preOdd[i][s[i - 1] - 'a'] = preOdd[i - 1][s[i - 1] - 'a'] + 1;
-        } else
-            preOdd[i] = preOdd[i - 1];
+    vector<int> dp(n + 1, 0);
+    int answer = 1;
+    for (auto &it : levels[2]) {
+        answer = mod_add(answer, helper(it, dp, par, levels, 2, max_level), MOD);
     }
-    for (int i = 1; i <= n; i++) {
-        if (i % 2 == 0) {
-            preEven[i] = preEven[i - 1];
-            preEven[i][s[i - 1] - 'a'] = preEven[i - 1][s[i - 1] - 'a'] + 1;
-        } else
-            preEven[i] = preEven[i - 1];
-    }
-    int answer = n;
-    for (int i = 2; i < n; i++) {
-        vi evenTemp = preEven[n];
-        vi oddTemp = preOdd[n];
-        if (i % 2 == 0) {
-            for (int j = 0; j < 26; j++) {
-                evenTemp[j] -= preEven[i][j];
-                evenTemp[j] += preOdd[i - 1][j];
-                oddTemp[j] += preEven[i - 2][j];
-                oddTemp[j] -= preOdd[i - 1][j];
-            }
-        } else {
-            for (int j = 0; j < 26; j++) {
-                oddTemp[j] -= preOdd[i][j];
-                oddTemp[j] += preEven[i - 1][j];
-                evenTemp[j] += preOdd[i - 2][j];
-                evenTemp[j] -= preEven[i - 1][j];
-            }
-        }
-        int evenMax = *max_element(all(evenTemp));
-        int oddMax = *max_element(all(oddTemp));
-        answer = min(answer, n - 1 - evenMax - oddMax);
-    }
-    // deleting first index
-    vi evenTemp = preEven[n];
-    vi oddTemp = preOdd[n];
-    for (int i = 0; i < 26; i++) {
-        evenTemp[i] -= preEven[1][i];
-        oddTemp[i] -= preOdd[1][i];
-    }
-    int evenMax = *max_element(all(evenTemp));
-    int oddMax = *max_element(all(oddTemp));
-    answer = min(answer, n - 1 - evenMax - oddMax);
-    // deleting last index
-    evenTemp = preEven[n - 1];
-    oddTemp = preOdd[n - 1];
-    evenMax = *max_element(all(evenTemp));
-    oddMax = *max_element(all(oddTemp));
-    answer = min(answer, n - 1 - evenMax - oddMax);
-    cout << answer + 1 << nl;
+    cout << answer << '\n';
 }
 signed main() {
     ios_base::sync_with_stdio(false);

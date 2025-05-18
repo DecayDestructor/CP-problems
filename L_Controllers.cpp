@@ -131,6 +131,7 @@ void solve() {
         cin >> a >> b;
         ll num = (x * min(a, b) - y * max(a, b));
         ll deno = min(a, b) - max(a, b);
+
         if (x == y or num == 0) {
             cout << "YES" << endl;
         } else if (deno == 0) {

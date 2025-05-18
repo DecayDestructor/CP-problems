@@ -113,81 +113,24 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n;
-    string s;
-    cin >> n >> s;
-    vector<vi> preOdd(n + 1, vi(26));
-    vector<vi> preEven(n + 1, vi(26));
-    if (n % 2 == 0) {
-        vi temp(26, 0);
-        int evenMax = 0;
-        int oddMax = 0;
-        for (int i = 0; i < n; i += 2) {
-            temp[s[i] - 'a']++;
-            evenMax = max(evenMax, temp[s[i] - 'a']);
+    string a, b, c;
+    cin >> a >> b >> c;
+    int l1 = a.length();
+    int l2 = b.length();
+    int l3 = c.length();
+    vector<vector<int>> dp(l1 + 1, vector<int>(l2 + 1));
+    for (int i = 0; i < l1; i++) {
+        dp[i + 1][0] = dp[i][0] + (a[i] != c[i]);
+    }
+    for (int i = 0; i < l2; i++) {
+        dp[0][i + 1] = dp[0][i] + (b[i] != c[i]);
+    }
+    for (int i = 1; i <= l1; i++) {
+        for (int j = 1; j <= l2; j++) {
+            dp[i][j] = min(dp[i - 1][j] + (a[i - 1] != c[i + j - 1]), dp[i][j - 1] + (b[j - 1] != c[i + j - 1]));
         }
-        temp.assign(26, 0);
-        for (int i = 1; i < n; i += 2) {
-            temp[s[i] - 'a']++;
-            oddMax = max(oddMax, temp[s[i] - 'a']);
-        }
-        cout << n - oddMax - evenMax << nl;
-        return;
     }
-    for (int i = 1; i <= n; i++) {
-        if (i % 2) {
-            preOdd[i] = preOdd[i - 1];
-            preOdd[i][s[i - 1] - 'a'] = preOdd[i - 1][s[i - 1] - 'a'] + 1;
-        } else
-            preOdd[i] = preOdd[i - 1];
-    }
-    for (int i = 1; i <= n; i++) {
-        if (i % 2 == 0) {
-            preEven[i] = preEven[i - 1];
-            preEven[i][s[i - 1] - 'a'] = preEven[i - 1][s[i - 1] - 'a'] + 1;
-        } else
-            preEven[i] = preEven[i - 1];
-    }
-    int answer = n;
-    for (int i = 2; i < n; i++) {
-        vi evenTemp = preEven[n];
-        vi oddTemp = preOdd[n];
-        if (i % 2 == 0) {
-            for (int j = 0; j < 26; j++) {
-                evenTemp[j] -= preEven[i][j];
-                evenTemp[j] += preOdd[i - 1][j];
-                oddTemp[j] += preEven[i - 2][j];
-                oddTemp[j] -= preOdd[i - 1][j];
-            }
-        } else {
-            for (int j = 0; j < 26; j++) {
-                oddTemp[j] -= preOdd[i][j];
-                oddTemp[j] += preEven[i - 1][j];
-                evenTemp[j] += preOdd[i - 2][j];
-                evenTemp[j] -= preEven[i - 1][j];
-            }
-        }
-        int evenMax = *max_element(all(evenTemp));
-        int oddMax = *max_element(all(oddTemp));
-        answer = min(answer, n - 1 - evenMax - oddMax);
-    }
-    // deleting first index
-    vi evenTemp = preEven[n];
-    vi oddTemp = preOdd[n];
-    for (int i = 0; i < 26; i++) {
-        evenTemp[i] -= preEven[1][i];
-        oddTemp[i] -= preOdd[1][i];
-    }
-    int evenMax = *max_element(all(evenTemp));
-    int oddMax = *max_element(all(oddTemp));
-    answer = min(answer, n - 1 - evenMax - oddMax);
-    // deleting last index
-    evenTemp = preEven[n - 1];
-    oddTemp = preOdd[n - 1];
-    evenMax = *max_element(all(evenTemp));
-    oddMax = *max_element(all(oddTemp));
-    answer = min(answer, n - 1 - evenMax - oddMax);
-    cout << answer + 1 << nl;
+    cout << dp[l1][l2] << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
