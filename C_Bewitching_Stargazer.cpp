@@ -97,51 +97,22 @@ ll binpow(ll a, ll b, ll m) {
 }
 map<int, int> mpp;
 map<int, vector<int>> mid;
-ll helper(ll l, ll r, ll &k, int counter) {
-    if (r - l + 1 < k) {
-        return 0;
-    }
-    // cout << l << " : " << r << nl;
-    ll middle = (l + r) / 2;
-    if ((r - l + 1) % 2 == 0) {
-        // cout << "l to r is even " << nl;
-        return helper(l, middle, k, counter + 1) + helper(middle + 1, r, k, counter + 1);
-    } else {
-        // cout << "adding " << middle << nl;
-        mpp[counter] += middle;
-        mid[counter].push_back(middle);
-        return middle + helper(l, middle - 1, k, counter + 1) + helper(middle + 1, r, k, counter + 1);
+int helper(int r, int k) {
+    if (r < k) return 0;
+    int child = helper(r / 2, k);
+    if (r % 2 == 0) {
     }
 }
-int sumOfAp(int a, int n) {
-    return 1ll * a * n * n;
+int sumOfAp(int a, int n, int d) {
+    return 1ll * a * n + 1ll * n / 2 * (n - 1) * d;
 }
 void solve() {
-    ll n, k;
+    int curr = 1;
+    int n, k;
     cin >> n >> k;
-    int r = n, l = 1;
-    int answer = 0;
-    int level = 1;
-    int counter = 1;
-    cout << helper(1, n, k, counter) << nl;
-    bool oddParent = true;
-    while (r - l + 1 >= k) {
-        if ((r - l + 1) % 2) {
-            cout << "level : " << level << nl;
-            cout << l << " : " << r << " : " << sumOfAp((r + l) / 2, level) << nl;
-            answer += (sumOfAp((r + l) / 2, level));
-        }
-        r = r / 2;
-        level = level * 2;
-    }
-    for (auto &it : mpp) {
-        for (auto &j : mid[it.first]) {
-            cout << j << " ";
-        }
-        cout << " : ";
-        cout << it.first << " : " << it.second << nl;
-    }
-    cout << answer << nl;
+    int l = 1, r = n;
+    // cout << helper(n, k) << nl;
+    ;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

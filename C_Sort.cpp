@@ -113,25 +113,33 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n;
-    cin >> n;
-    vector<int> a;
-    a.push_back(-1e9);
-    for (int i = 0; i < n; i++) {
-        int x;
-        cin >> x;
-        if (a.back() == x)
-            ;
-        else
-            a.push_back(x);
+    int n, q;
+    cin >> n >> q;
+    string a, b;
+    cin >> a >> b;
+    vector<vector<int>> preA(n + 1, vi(26));
+    vector<vector<int>> preB(n + 1, vi(26));
+    for (int i = 1; i <= n; i++) {
+        preA[i] = preA[i - 1];
+        preA[i][a[i - 1] - 'a']++;
+        preB[i] = preB[i - 1];
+        preB[i][b[i - 1] - 'a']++;
     }
-    a.push_back(-1e9);
-
-    int ans = 0;
-    for (int i = 1; i < a.size() - 1; i++)
-        if (a[i - 1] < a[i] && a[i] > a[i + 1]) ans++;
-
-    cout << ans << endl;
+    while (q--) {
+        int l, r;
+        cin >> l >> r;
+        vi leftA = preA[l - 1];
+        vi rightA = preA[r];
+        vi leftB = preB[l - 1];
+        vi rightB = preB[r];
+        int answer = n + n;
+        int change = 0;
+        for (int i = 0; i < 26; i++) {
+            if (rightA[i] - leftA[i] == rightB[i] - leftB[i]) continue;
+            change += max(0ll, rightA[i] - leftA[i] - (rightB[i] - leftB[i]));
+        }
+        cout << change << nl;
+    }
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -142,23 +150,5 @@ signed main() {
     while (t--) {
         solve();
     }
-    // if (t == 4) {
-    //     /* code */
-    //     while (t--) {
-    //         solve();
-    //     }
-    // } else {
-    //     for (int i = 0; i < t; i++) {
-    //         int n;
-    //         cin >> n;
-    //         vi arr(n);
-    //         for (auto &it : arr) cin >> it;
-    //         if (i == 78) {
-    //             cout << n << nl;
-    //             for (auto &it : arr) cout << it << " ";
-    //         }
-    //     }
-    // }
-
     return 0;
 }

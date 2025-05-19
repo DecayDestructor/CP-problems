@@ -114,20 +114,6 @@ ll mod_div(ll a, ll b, ll m) {
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 const int MOD = 998244353;
 
-int helper(int root, vector<int> &dp, vector<int> &par, vector<vector<int>> &levels, int current_level, int max_level) {
-    if (current_level > max_level || levels[current_level].empty()) return 0;
-    if (dp[root] != 0) return dp[root];
-
-    for (auto &it : levels[current_level + 1]) {
-        if (par[it] != root) {
-            dp[root] = mod_add(helper(it, dp, par, levels, current_level + 1, max_level), dp[root], MOD);
-        }
-    }
-
-    dp[root] = mod_add(dp[root], 1, MOD);
-    return dp[root];
-}
-
 void solve() {
     int n;
     cin >> n;
@@ -165,11 +151,24 @@ void solve() {
         }
     }
     vector<int> dp(n + 1, 0);
-    int answer = 1;
+    vector<int> layerTotal(n + 1, 0);
+    layerTotal[1] = 1;
+    dp[1] = 1;
     for (auto &it : levels[2]) {
-        answer = mod_add(answer, helper(it, dp, par, levels, 2, max_level), MOD);
+        dp[it] = 1;
+        layerTotal[2] += 1;
     }
-    cout << answer << '\n';
+    for (int i = 3; i <= max_level; i++) {
+        for (auto &it : levels[i]) {
+            dp[it] = layerTotal[i - 1] % MOD - dp[par[it]] % MOD;
+            dp[it] %= MOD;
+            layerTotal[i] += dp[it];
+            layerTotal[i] %= MOD;
+        }
+    }
+    int answer = 0;
+    for (auto &it : layerTotal) answer = mod_add(it, answer, MOD);
+    cout << answer % MOD << '\n';
 }
 signed main() {
     ios_base::sync_with_stdio(false);
