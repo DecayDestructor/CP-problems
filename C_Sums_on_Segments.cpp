@@ -1,8 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define int long long
+
 #define nl '\n'
 #define loop(s, n) for (ll i = s; i < n; i++)
+#define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
 #define print(ans) cout << ans << nl
@@ -14,28 +15,9 @@ using namespace std;
 #define vvch vector<vector<char>>
 #define vch vector<char>
 template <typename T1, typename T2>
+#define int long long
 using vpp = vector<pair<T1, T2>>;
 ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
-// Template functions for input and output
-template <typename T>
-void inputArray(vector<T> &arr, int n) {
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-    }
-}
-
-void debug(auto &arr) {
-    for (auto &it : arr) {
-        cout << it << " ";
-    }
-    cout << nl;
-}
-template <typename T>
-void outputArray(vector<T> &arr, int n) {
-    for (int i = 0; i < n; i++) {
-        cout << arr[i] << nl;
-    }
-}
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -53,7 +35,8 @@ vector<T> factorization(int n) {
     return factors;
 }
 // Prime Factorization
-void primeFactorisation(ll n, map<ll, ll> &mpp) {
+map<int, int> primeFactorisation(ll n) {
+    map<int, int> mpp;
     for (ll i = 2; i <= sqrt(n); i++) {
         while (n % i == 0) {
             mpp[i]++;
@@ -62,6 +45,7 @@ void primeFactorisation(ll n, map<ll, ll> &mpp) {
     }
     if (n != 1)
         mpp[n]++;
+    return mpp;
 }
 // Sieve of Eratosthenes
 vector<ll> sieveOfEratosthenes(int n) {
@@ -78,7 +62,7 @@ vector<ll> sieveOfEratosthenes(int n) {
 }
 // Sum of first n natural numbers
 ll sumOfNaturalNumbers(ll n) {
-    return (n * (n + 1)) / 2;  // Formula to calculate the sum
+    return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
 bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
@@ -95,25 +79,83 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
-map<int, int> mpp;
-map<int, vector<int>> mid;
-int helper(int r, int k) {
-    if (r < k) return 0;
-    int child = helper(r / 2, k);
-    if (r % 2 == 0) {
-        }
+ll binpow(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1) res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
 }
-int sumOfAp(int a, int n, int d) {
-    return 1ll * a * n + 1ll * n / 2 * (n - 1) * d;
+ll mminvprime(ll a, ll m) {
+    return binpow(a, m - 2, m);
 }
+ll mod_add(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a + b) % m) + m) % m;
+}
+ll mod_mul(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a * b) % m) + m) % m;
+}
+ll mod_sub(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a - b) % m) + m) % m;
+}
+ll mod_div(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+}
+int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int curr = 1;
-    int n, k;
-    cin >> n >> k;
-    int l = 1, r = n;
-    // cout << helper(n, k) << nl;
-    ;
+    int n;
+    cin >> n;
+    vll a(n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+
+    ll l1 = 0, r1 = 0;
+    ll l2 = 2e9, r2 = -2e9;
+
+    ll pr = 0;
+    ll mnl = 0, mxl = 0;
+    ll mnr = 2e9, mxr = -2e9;
+
+    for (int i = 0; i < n; i++) {
+        pr += a[i];
+        if (a[i] != -1 && a[i] != 1) {
+            mnr = mnl;
+            mxr = mxl;
+            mnl = mxl = pr;
+        }
+        l1 = min(l1, pr - mxl);
+        r1 = max(r1, pr - mnl);
+        l2 = min(l2, pr - mxr);
+        r2 = max(r2, pr - mnr);
+        mnl = min(mnl, pr);
+        mxl = max(mxl, pr);
+    }
+
+    vll res;
+    if (l2 > r1) {
+        for (ll i = l1; i <= r1; i++) res.push_back(i);
+        for (ll i = l2; i <= r2; i++) res.push_back(i);
+    } else if (r2 < l1) {
+        for (ll i = l2; i <= r2; i++) res.push_back(i);
+        for (ll i = l1; i <= r1; i++) res.push_back(i);
+    } else {
+        for (ll i = min(l1, l2); i <= max(r1, r2); i++) res.push_back(i);
+    }
+
+    print(res.size());
+    for (auto val : res) cout << val << " ";
+    cout << nl;
 }
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

@@ -1,8 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define int long long
+
 #define nl '\n'
 #define loop(s, n) for (ll i = s; i < n; i++)
+#define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
 #define print(ans) cout << ans << nl
@@ -14,28 +15,9 @@ using namespace std;
 #define vvch vector<vector<char>>
 #define vch vector<char>
 template <typename T1, typename T2>
+#define int long long
 using vpp = vector<pair<T1, T2>>;
 ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
-// Template functions for input and output
-template <typename T>
-void inputArray(vector<T> &arr, int n) {
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-    }
-}
-
-void debug(auto &arr) {
-    for (auto &it : arr) {
-        cout << it << " ";
-    }
-    cout << nl;
-}
-template <typename T>
-void outputArray(vector<T> &arr, int n) {
-    for (int i = 0; i < n; i++) {
-        cout << arr[i] << nl;
-    }
-}
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -53,7 +35,8 @@ vector<T> factorization(int n) {
     return factors;
 }
 // Prime Factorization
-void primeFactorisation(ll n, map<ll, ll> &mpp) {
+map<int, int> primeFactorisation(ll n) {
+    map<int, int> mpp;
     for (ll i = 2; i <= sqrt(n); i++) {
         while (n % i == 0) {
             mpp[i]++;
@@ -62,6 +45,7 @@ void primeFactorisation(ll n, map<ll, ll> &mpp) {
     }
     if (n != 1)
         mpp[n]++;
+    return mpp;
 }
 // Sieve of Eratosthenes
 vector<ll> sieveOfEratosthenes(int n) {
@@ -78,7 +62,7 @@ vector<ll> sieveOfEratosthenes(int n) {
 }
 // Sum of first n natural numbers
 ll sumOfNaturalNumbers(ll n) {
-    return (n * (n + 1)) / 2;  // Formula to calculate the sum
+    return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
 bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
@@ -95,24 +79,46 @@ ll binpow(ll a, ll b, ll m) {
     }
     return res;
 }
-map<int, int> mpp;
-map<int, vector<int>> mid;
-int helper(int r, int k) {
-    if (r < k) return 0;
-    int child = helper(r / 2, k);
-    if (r % 2 == 0) {
-        }
+ll binpow(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1) res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
 }
-int sumOfAp(int a, int n, int d) {
-    return 1ll * a * n + 1ll * n / 2 * (n - 1) * d;
+ll mminvprime(ll a, ll m) {
+    return binpow(a, m - 2, m);
 }
+ll mod_add(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a + b) % m) + m) % m;
+}
+ll mod_mul(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a * b) % m) + m) % m;
+}
+ll mod_sub(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a - b) % m) + m) % m;
+}
+ll mod_div(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+}
+int ceil_div(int a, int b) { return (a + b - 1) / b; }
+const int MOD = (int)1e9 + 7;
+int MAXN = (int)1e6;
+vector<vi> dp(MAXN + 1, vi(2, 0));
 void solve() {
-    int curr = 1;
-    int n, k;
-    cin >> n >> k;
-    int l = 1, r = n;
-    // cout << helper(n, k) << nl;
-    ;
+    int n;
+    cin >> n;
+    cout << mod_add(dp[MAXN - n + 1][1], dp[MAXN - n + 1][0], MOD) << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -120,6 +126,13 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
+
+    dp[MAXN][0] = 1;
+    dp[MAXN][1] = 1;
+    for (int i = MAXN - 1; i >= 1; i--) {
+        dp[i][0] = mod_add(2 * dp[i + 1][0], dp[i + 1][1], MOD);
+        dp[i][1] = mod_add(4 * dp[i + 1][1], dp[i + 1][0], MOD);
+    }
     while (t--) {
         solve();
     }
