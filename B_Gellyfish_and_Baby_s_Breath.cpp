@@ -112,76 +112,43 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-bool validate(vi &arr, int k) {
-    int n = arr.size();
-    int left = 0, right = 0;
-    int smaller = 0;
-    while (right < n - 2) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 2 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    right++;
-    smaller = 0;
-    left = right;
-    while (right < n - 1) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 1 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    return right < n - 1;
-}
+const int MOD = 998244353;
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    vi arr(n);
-    for (auto &it : arr) cin >> it;
-    if (validate(arr, k)) {
-        py;
-        return;
-    }
-    vi temp = arr;
-    reverse(all(temp));
-    if (validate(temp, k)) {
-        py;
-        return;
-    }
-    int smaller = 0;
-    int i = 0;
-    for (; i < n - 1; i++) {
-        if (arr[i] <= k) smaller++;
-        if (smaller >= ceil_div(i + 1, 2)) {
-            i++;
-            break;
+    int n;
+    cin >> n;
+    vi a(n), b(n);
+    for (auto &it : a) cin >> it;
+    for (auto &it : b) cin >> it;
+    priority_queue<pair<int, int>> pq1;
+    priority_queue<pair<int, int>> pq2;
+    vi answer(n);
+    for (int i = 0; i < n; i++) {
+        pq1.push({a[i], i});
+        pq2.push({b[i], i});
+        // auto [a1, pos1] = pq1.top();
+        // auto [b1, pos2] = pq2.top();
+        int a1 = pq1.top().first;
+        int pos1 = pq1.top().second;
+        int b1 = pq2.top().first;
+        int pos2 = pq2.top().second;
+        // cout << i << nl;
+        if (a1 > b1) {
+            // cout << "Selecting from a" << nl;
+            answer[i] = mod_add(binpow(2, a1, MOD), binpow(2, b[i - pos1], MOD), MOD);
+        } else if (b1 > a1) {
+            // cout << "Selecting from b" << nl;
+            answer[i] = mod_add(binpow(2, b1, MOD), binpow(2, a[i - pos2], MOD), MOD);
+        } else {
+            int maxi = max(a[i - pos2], b[i - pos1]);
+            // cout << "Selected " << maxi << nl;
+            answer[i] = mod_add(binpow(2, a1, MOD), binpow(2, maxi, MOD), MOD);
         }
     }
-    // cout << i << " : " << smaller << nl;
-    smaller = 0;
-    for (int j = n - 1; j > i; j--) {
-        if (arr[j] <= k) {
-            smaller++;
-        }
-        // cout << n - j << " : " << smaller << nl;
-        if (smaller >= ceil_div(n - j, 2)) {
-            py;
-            return;
-        }
+    for (int i = 0; i < n; i++) {
+        cout << answer[i] << " ";
     }
-    pn;
+    cout << nl;
 }
-
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

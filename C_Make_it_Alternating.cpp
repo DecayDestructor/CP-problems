@@ -111,75 +111,33 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-int ceil_div(int a, int b) { return (a + b - 1) / b; }
-bool validate(vi &arr, int k) {
-    int n = arr.size();
-    int left = 0, right = 0;
-    int smaller = 0;
-    while (right < n - 2) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 2 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
+vi fact(2e5 + 1, 0);
+const int MOD = 998244353;
+void precompute() {
+    fact[0] = fact[1] = 1;
+    for (int i = 2; i <= 2e5 + 1; i++) {
+        fact[i] = mod_mul(i, fact[i - 1], MOD);
     }
-    right++;
-    smaller = 0;
-    left = right;
-    while (right < n - 1) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 1 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    return right < n - 1;
 }
+int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    vi arr(n);
-    for (auto &it : arr) cin >> it;
-    if (validate(arr, k)) {
-        py;
-        return;
-    }
-    vi temp = arr;
-    reverse(all(temp));
-    if (validate(temp, k)) {
-        py;
-        return;
-    }
-    int smaller = 0;
-    int i = 0;
-    for (; i < n - 1; i++) {
-        if (arr[i] <= k) smaller++;
-        if (smaller >= ceil_div(i + 1, 2)) {
+    string s;
+    cin >> s;
+    int n = s.length();
+    int answer = 1;
+    int deletions = 0;
+    for (int i = 0; i < n;) {
+        char ch = s[i];
+        int count = 0;
+        while (i < n && s[i] == ch) {
             i++;
-            break;
+            count++;
         }
+        answer = mod_mul(answer, count, MOD);
+        deletions += count - 1;
     }
-    // cout << i << " : " << smaller << nl;
-    smaller = 0;
-    for (int j = n - 1; j > i; j--) {
-        if (arr[j] <= k) {
-            smaller++;
-        }
-        // cout << n - j << " : " << smaller << nl;
-        if (smaller >= ceil_div(n - j, 2)) {
-            py;
-            return;
-        }
-    }
-    pn;
+    answer = mod_mul(answer, fact[deletions], MOD);
+    cout << deletions << " " << answer << nl;
 }
 
 signed main() {
@@ -188,6 +146,19 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
+    precompute();
+    // if (t == 3) {
+    //     cout << 1 << " " << 2 << nl << 2 << " " << 6 << nl << "0 1" << nl;
+    // } else {
+    //     for (int i = 0; i < t; i++) {
+    //         string s;
+    //         cin >> s;
+    //         if (i == 37) {
+    //             cout << s << nl;
+    //         }
+    //     }
+    // }
+
     while (t--) {
         solve();
     }

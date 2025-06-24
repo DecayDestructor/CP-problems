@@ -112,76 +112,23 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-bool validate(vi &arr, int k) {
-    int n = arr.size();
-    int left = 0, right = 0;
-    int smaller = 0;
-    while (right < n - 2) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 2 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    right++;
-    smaller = 0;
-    left = right;
-    while (right < n - 1) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 1 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    return right < n - 1;
-}
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    vi arr(n);
-    for (auto &it : arr) cin >> it;
-    if (validate(arr, k)) {
-        py;
-        return;
-    }
-    vi temp = arr;
-    reverse(all(temp));
-    if (validate(temp, k)) {
-        py;
-        return;
-    }
-    int smaller = 0;
-    int i = 0;
-    for (; i < n - 1; i++) {
-        if (arr[i] <= k) smaller++;
-        if (smaller >= ceil_div(i + 1, 2)) {
-            i++;
-            break;
-        }
-    }
-    // cout << i << " : " << smaller << nl;
-    smaller = 0;
-    for (int j = n - 1; j > i; j--) {
-        if (arr[j] <= k) {
-            smaller++;
-        }
-        // cout << n - j << " : " << smaller << nl;
-        if (smaller >= ceil_div(n - j, 2)) {
+    int n;
+    string s;
+    cin >> n >> s;
+    set<char> stt;
+    stt.insert(s[0]);
+    stt.insert(s[n - 1]);
+    for (int i = 1; i < n - 1; i++) {
+        if (stt.count(s[i])) {
             py;
             return;
         }
+        stt.insert(s[i]);
     }
     pn;
+    return;
 }
-
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

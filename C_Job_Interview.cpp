@@ -112,76 +112,78 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-bool validate(vi &arr, int k) {
-    int n = arr.size();
-    int left = 0, right = 0;
-    int smaller = 0;
-    while (right < n - 2) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 2 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    right++;
-    smaller = 0;
-    left = right;
-    while (right < n - 1) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 1 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    return right < n - 1;
-}
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    vi arr(n);
-    for (auto &it : arr) cin >> it;
-    if (validate(arr, k)) {
-        py;
-        return;
-    }
-    vi temp = arr;
-    reverse(all(temp));
-    if (validate(temp, k)) {
-        py;
-        return;
-    }
-    int smaller = 0;
-    int i = 0;
-    for (; i < n - 1; i++) {
-        if (arr[i] <= k) smaller++;
-        if (smaller >= ceil_div(i + 1, 2)) {
-            i++;
-            break;
+    int n, m;
+    cin >> n >> m;
+    vi a(n + m + 1, 0);
+    vi b(m + n + 1, 0);
+    for (auto &it : a) cin >> it;
+    for (auto &it : b) cin >> it;
+    vvll pre(n + m + 2, vi(2));  // 0 = programmers, 1 = testers
+    vvll suff(n + m + 2, vi(2));
+    pre[0][0] = 0;
+    pre[0][1] = 0;
+    suff[n + m + 1][0] = 0;
+    suff[n + m + 1][1] = 0;
+    int total = n + m + 1;
+    int programmers = 0, testers = 0;
+    for (int i = 1; i <= total; i++) {
+        if (programmers == n) {
+            pre[i][0] = pre[i - 1][0];
+            pre[i][1] = pre[i - 1][1] + b[i - 1];
+            testers++;
+        } else if (testers == m) {
+            pre[i][1] = pre[i - 1][1];
+            pre[i][0] = pre[i - 1][0] + a[i - 1];
+            // cout << i << " : " << pre[i - 1][0] << " : " << a[i - 1] << nl;
+            programmers++;
+        } else {
+            if (a[i] > b[i]) {
+                pre[i][0] = pre[i - 1][0] + a[i - 1];
+                pre[i][1] = pre[i - 1][1];
+                programmers++;
+            } else {
+                pre[i][1] = pre[i - 1][1] + b[i - 1];
+                pre[i][0] = pre[i - 1][0];
+                testers++;
+            }
         }
     }
-    // cout << i << " : " << smaller << nl;
-    smaller = 0;
-    for (int j = n - 1; j > i; j--) {
-        if (arr[j] <= k) {
-            smaller++;
-        }
-        // cout << n - j << " : " << smaller << nl;
-        if (smaller >= ceil_div(n - j, 2)) {
-            py;
-            return;
+    programmers = testers = 0;
+    for (int i = total - 1; i >= 0; i--) {
+        if (programmers == n) {
+            suff[i][0] = suff[i + 1][0];
+            suff[i][1] = suff[i + 1][1] + b[i];
+            testers++;
+        } else if (testers == m) {
+            suff[i][1] = suff[i + 1][1];
+            suff[i][0] = suff[i + 1][0] + a[i];
+            programmers++;
+        } else {
+            if (a[i] > b[i]) {
+                suff[i][0] = suff[i + 1][0] + a[i];
+                suff[i][1] = suff[i + 1][1];
+                programmers++;
+            } else {
+                suff[i][1] = suff[i + 1][1] + b[i];
+                suff[i][0] = suff[i + 1][0];
+                testers++;
+            }
         }
     }
-    pn;
+    for (auto &it : a) cout << it << " ";
+    cout << nl;
+    for (auto &it : b) cout << it << " ";
+    cout << nl;
+    for (auto &it : pre) cout << it[0] << " ";
+    cout << nl;
+    for (auto &it : pre) cout << it[1] << " ";
+    cout << nl;
+    for (auto &it : suff) cout << it[0] << " ";
+    cout << nl;
+    for (auto &it : suff) cout << it[1] << " ";
+    cout << nl;
 }
-
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

@@ -112,76 +112,50 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-bool validate(vi &arr, int k) {
-    int n = arr.size();
-    int left = 0, right = 0;
-    int smaller = 0;
-    while (right < n - 2) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 2 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
+bool helper(int middle, vi &arr, vector<vi> &bits, int left, int check) {
+    int counter = 1;
+    int sum = 0;
+    for (int j = 0; j < 32; j++) {
+        if (bits[middle][j] - bits[left - 1][j] == middle - left + 1) {
+            sum += counter;
         }
-        right++;
+        counter = counter * 2;
     }
-    right++;
-    smaller = 0;
-    left = right;
-    while (right < n - 1) {
-        if (arr[right] <= k) smaller++;
-        if (smaller >= ceil_div(right - left + 1, 2)) {
-            if (right + 1 < n - 1 && arr[right + 1] > k && (right - left + 1) % 2) {
-                right++;
-            }
-            // cout << "exiting at " << right << " : " << arr[right] << nl;
-            break;
-        }
-        right++;
-    }
-    return right < n - 1;
+    return sum >= check;
 }
 void solve() {
-    int n, k;
-    cin >> n >> k;
+    int n;
+    cin >> n;
     vi arr(n);
-    for (auto &it : arr) cin >> it;
-    if (validate(arr, k)) {
-        py;
-        return;
-    }
-    vi temp = arr;
-    reverse(all(temp));
-    if (validate(temp, k)) {
-        py;
-        return;
-    }
-    int smaller = 0;
-    int i = 0;
-    for (; i < n - 1; i++) {
-        if (arr[i] <= k) smaller++;
-        if (smaller >= ceil_div(i + 1, 2)) {
-            i++;
-            break;
+    vector<vi> bits(n + 1, vi(32));
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+        int a = arr[i];
+        for (int j = 0; j < 32 && a; j++) {
+            bits[i + 1][j] += (bits[i][j] + (a & 1));
+            a = a / 2;
         }
     }
-    // cout << i << " : " << smaller << nl;
-    smaller = 0;
-    for (int j = n - 1; j > i; j--) {
-        if (arr[j] <= k) {
-            smaller++;
+    int q;
+    cin >> q;
+    for (int i = 0; i < q; i++) {
+        int l, k;
+        cin >> l >> k;
+        int left = l, right = n;
+        int answer = -1;
+        while (left <= right) {
+            int middle = left + (right - left) / 2;
+            if (helper(middle, arr, bits, l, k)) {
+                answer = max(answer, middle);
+                left = middle + 1;
+            } else {
+                right = middle - 1;
+            }
         }
-        // cout << n - j << " : " << smaller << nl;
-        if (smaller >= ceil_div(n - j, 2)) {
-            py;
-            return;
-        }
+        cout << answer << " ";
     }
-    pn;
+    cout << nl;
 }
-
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
