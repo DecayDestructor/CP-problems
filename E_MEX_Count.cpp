@@ -113,39 +113,54 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    int n;
+    cin >> n;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    sort(all(arr));
+    set<int> stt;
+    for (int i = 0; i <= arr[n - 1]; i++) {
+        stt.insert(i);
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
-        }
-        p2++;
+    for (auto &it : arr)
+        if (stt.count(it)) stt.erase(it);
+    int mex = arr[n - 1] + 1;
+    if (stt.size()) {
+        mex = *stt.begin();
     }
+    // cout << stt.size() << nl;
+    vi temp;
+    for (int i = 0; i <= mex; i++) {
+        temp.push_back(i);
+    }
+    // cout << mex << nl;
+    vi k(n + 2);
+    for (auto &it : temp) {
+        int count = upper_bound(all(arr), it) - lower_bound(all(arr), it);
+        int after = arr.end() - upper_bound(all(arr), it);
+        int before = lower_bound(all(arr), it) - arr.begin() - it;
+        int high = count + after + before;
+        int low = count;
+        // cout << it << " : " << low << " : " << high << nl;
+        k[low]++;
+        k[high + 1]--;
+    }
+    // for (auto &it : k) cout << it << " ";
+    // cout << nl;
+    cout << k[0] << " ";
+    int curr = k[0];
+    for (int i = 1; i <= n; i++) {
+        cout << k[i] + curr << " ";
+        curr = curr + k[i];
+    }
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

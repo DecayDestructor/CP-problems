@@ -113,39 +113,29 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    int n, a, b;
+    cin >> n >> a >> b;
+    vector<ll> arr(n);
+    for (auto &it : arr) cin >> it;
+
+    vector<ll> pre(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+        pre[i] = pre[i - 1] + arr[i - 1];
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
-        }
-        p2++;
+    int answer = b * pre[n];
+    for (int i = 1; i <= n; i++) {
+        int cost = a * arr[i - 1] + b * pre[n] - b * (pre[i - 1] + (n - i) * arr[i - 1]);
+        // cout << i << " : " << cost << nl;
+        answer = min(cost, answer);
     }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

@@ -112,40 +112,51 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+void dfs(int node, vi &answer, int maxi, int mini, vector<vi> &adj, vi &values) {
+    if (answer[node] != -1) return;
+    // cout << node << " : " << maxi << " : " << mini << nl;
+    int tempMaxi = maxi;
+    maxi = max(values[node], values[node] - mini);
+    mini = min(values[node], values[node] - tempMaxi);
+    answer[node] = maxi;
+    for (auto &it : adj[node]) {
+        if (answer[it] == -1)
+            dfs(it, answer, maxi, mini, adj, values);
+    }
+    return;
+}
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    int n;
+    cin >> n;
+    vector<vi> adj(n + 1);
+    vi values(n + 1);
+    for (int i = 1; i <= n; i++) {
+        cin >> values[i];
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
-        }
-        p2++;
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
+    vi answer(n + 1, -1);
+    answer[1] = values[1];
+
+    int maxi = values[1], mini = values[1];
+    for (auto &it : adj[1]) {
+        dfs(it, answer, maxi, mini, adj, values);
+    }
+    for (int i = 1; i <= n; i++) {
+        cout << answer[i] << " ";
+    }
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

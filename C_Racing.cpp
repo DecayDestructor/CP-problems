@@ -14,8 +14,9 @@ using namespace std;
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
 #define vch vector<char>
-template <typename T1, typename T2>
 #define int long long
+#define pi pair<int, int>
+template <typename T1, typename T2>
 using vpp = vector<pair<T1, T2>>;
 ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
@@ -116,20 +117,80 @@ void solve() {
     int n;
     cin >> n;
     vi d(n);
-    vector<pair<int, int>> arr;
+    vector<pair<int, int>> arr(n);
+    for (auto &it : d) cin >> it;
     for (auto &it : arr) cin >> it.first >> it.second;
-    vi max_height(n, -1);
-    max_height[n - 1] = arr[n - 1].second;
+    vi mini(n);
+    if (d[n - 1] == -1 || d[n - 1] == 1) {
+        mini[n - 1] = arr[n - 1].first - 1;
+    } else {
+        mini[n - 1] = arr[n - 1].first;
+    }
     for (int i = n - 2; i >= 0; i--) {
-        max_height[i] = min(arr[i].second, max_height[i + 1]);
+        if (d[i] != 0) {
+            mini[i] = max(arr[i].first - 1, mini[i + 1] - 1);
+        } else {
+            mini[i] = max(arr[i].first, mini[i + 1]);
+        }
+        // mini[i]=max(mini[i],arr[])
+    }
+    vi maxi(n);
+    maxi[n - 1] = arr[n - 1].second;
+    for (int i = n - 2; i >= 0; i--) {
+        maxi[i] = min(maxi[i + 1], arr[i].second);
+    }
+    // for (auto &it : mini) {
+    //     cout << it << " ";
+    // }
+    // cout << nl;
+    // for (auto &it : maxi) {
+    //     cout << it << " ";
+    // }
+    // cout << nl;
+    vi answer;
+    int curr = 0;
+    for (int i = 0; i < n; i++) {
+        if (curr < arr[i].first) {
+            cout << i << nl;
+            cout << -1 << nl;
+            return;
+        }
         if (d[i] == 1) {
-            max_height[i]--;
+            if (curr + 1 < mini[i] || curr + 1 < arr[i].first) {
+                cout << -1 << nl;
+                return;
+            }
+            if (curr + 1 > maxi[i]) {
+                cout << -1 << nl;
+                return;
+            } else {
+                curr++;
+                answer.push_back(1);
+            }
+        } else if (d[i] == -1) {
+            if (curr + 1 < mini[i] || curr + 1 < arr[i].first) {
+                cout << -1 << nl;
+                return;
+            }
+            if (curr + 1 > maxi[i]) {
+                answer.push_back(0);
+            } else {
+                curr++;
+                answer.push_back(1);
+            }
+        } else {
+            if (curr < mini[i] || curr > maxi[i]) {
+                cout << -1 << nl;
+                return;
+            }
+            curr += d[i];
+            answer.push_back(d[i]);
         }
     }
-    int h = 0;
-    for (int i = 0; i < n; i++) {
-        if ()
+    for (auto &it : answer) {
+        cout << it << " ";
     }
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -137,8 +198,29 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
+    // if (t == 5)
+    //     while (t--) {
+    //         solve();
+    //     }
+    // else {
+    //     for (int i = 0; i < t; i++) {
+    //         int n;
+    //         cin >> n;
+    //         vi d(n);
+    //         vector<pair<int, int>> arr(n);
+    //         for (auto &it : d) cin >> it;
+    //         for (auto &it : arr) cin >> it.first >> it.second;
+    //         if (i == 27) {
+    //             cout << n << nl;
+    //             for (auto &it : d) cout << it << " ";
+    //             cout << nl;
+    //             for (auto &it : arr) cout << it.first << " : " << it.second << nl;
+    //         }
+    //     }
+    // }
     while (t--) {
         solve();
     }
+
     return 0;
 }

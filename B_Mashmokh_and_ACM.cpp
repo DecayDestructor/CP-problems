@@ -112,33 +112,31 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+const int MOD = 1e9 + 7;
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    int n, k;
+    cin >> n >> k;
+    vector<vi> dp(n + 1, vi(k + 1));
+    for (int i = 1; i <= n; i++) {
+        dp[i][k] = 1;
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
+    // dp[i][j] = number of ways to form the sequence if i occupied the kth index
+    // transition-state = dp[i][k]=sum(dp[n*i][k+1])
+    for (int i = n; i >= 1; i--) {
+        for (int j = k - 1; j >= 1; j--) {
+            int curr = 1;
+            while (curr * i <= n) {
+                int temp = curr * i;
+                dp[i][j] = mod_add(dp[i][j], dp[temp][j + 1], MOD);
+                curr++;
             }
         }
-        p2++;
     }
+    int sum = 0;
+    for (int i = 1; i <= n; i++) {
+        sum = mod_add(dp[i][1], sum, MOD);
+    }
+    cout << sum % MOD << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

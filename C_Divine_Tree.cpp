@@ -115,29 +115,41 @@ int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n, m;
     cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
+    int mini = n;
+    int maxi = sumOfNaturalNumbers(n);
+    if (m > maxi || m < mini) {
+        cout << -1 << nl;
+    } else {
+        vi answer;
+        int curr = 0;
+        int ones = n;
+        set<int> numbers;
+        for (int i = 1; i <= n; i++) {
+            numbers.insert(i);
+        }
+        for (int i = n; i >= 1; i--) {
+            if (curr + ones == m) {
+                answer.push_back(1);
+                numbers.erase(1);
+                break;
+            } else if (curr + i + ones - 1 > m) {
+                continue;
+            } else {
+                answer.push_back(i);
+                numbers.erase(i);
+                curr += i;
+                ones--;
             }
         }
-        p2++;
+        while (numbers.size()) {
+            answer.push_back(*numbers.begin());
+            numbers.erase(numbers.begin());
+        }
+        cout << answer[0] << nl;
+        for (int i = 1; i < answer.size(); i++) {
+            cout << answer[i - 1] << " " << answer[i] << nl;
+        }
+        cout << nl;
     }
 }
 signed main() {
@@ -145,7 +157,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

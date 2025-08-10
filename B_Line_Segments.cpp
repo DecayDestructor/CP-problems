@@ -112,40 +112,35 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+int getDistance(int x1, int y1, int x2, int y2) {
+    return (1ll * (x1 - x2) * (x1 - x2)) + (1ll * (y2 - y1) * (y2 - y1));
+}
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
+    int n, x1, y1, x2, y2;
+    cin >> n;
+    cin >> x1 >> y1 >> x2 >> y2;
+    vi arr(n);
+    for (auto &it : arr) {
         cin >> it;
-        mpp[it]++;
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
-        }
-        p2++;
+    pair<int, int> curr = {arr[0], arr[0]};
+    for (auto &it : arr) {
+        curr.first -= it;
+        curr.second += it;
     }
+    curr.first = max(curr.first, 0ll);
+    cout << curr.first << " : " << curr.second << nl;
+    if (getDistance(x1, y1, x2, y2) > curr.second * curr.second || getDistance(x1, y1, x2, y2) < curr.first * curr.first) {
+        pn;
+    } else
+        py;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

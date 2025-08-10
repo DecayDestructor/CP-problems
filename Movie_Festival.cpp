@@ -113,32 +113,31 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+    int n;
+    cin >> n;
+    vector<pair<int, int>> arr(n);
+    for (auto &it : arr) cin >> it.first >> it.second;
+    auto cmp = [&](pair<int, int> a, pair<int, int> b) {
+        if (a.second < b.second) {
+            return true;
         }
-        p2++;
+        if (a.second > b.second)
+            return false;
+        else {
+            return a.first < b.first;
+        }
+    };
+    sort(all(arr), cmp);
+    int answer = 0;
+    for (int i = 0; i < n; i++) {
+        answer++;
+        int ending = arr[i].second;
+        while (i < n && arr[i].first < ending) {
+            i++;
+        }
+        i--;
     }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

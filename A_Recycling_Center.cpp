@@ -112,40 +112,45 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+int helper(int x) {
+    int curr = 1;
+    int answer = 0;
+    while (curr <= x) {
+        answer++;
+        curr = curr << 1;
+    }
+    return answer;
+}
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
+    int n, k;
+    cin >> n >> k;
+    vi arr(n);
+    priority_queue<int, vi, greater<int>> pq;
+    for (auto &it : arr) {
         cin >> it;
-        mpp[it]++;
+        if (it <= k)
+            pq.push(helper(k / it));
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+    int time = 0;
+    int answer = n;
+    while (pq.size()) {
+        int curr = pq.top();
+        // cout << curr << " " << ": " << time << " ";
+        if (time < curr) {
+            time++;
+            answer--;
         }
-        p2++;
+        pq.pop();
     }
+    // cout << nl;
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

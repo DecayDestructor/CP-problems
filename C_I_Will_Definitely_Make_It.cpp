@@ -113,31 +113,32 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
+    int n, k;
+    cin >> n >> k;
+    k--;
+
+    vi h(n);
+    for (int i = 0; i < n; i++) cin >> h[i];
+
+    set<int> st(all(h));
+    vi uniqueHeights(all(st));
+
+    int current = h[k];
+    int budget = h[k];
+
+    for (int height : uniqueHeights) {
+        if (height <= current) continue;
+        if (height - current <= budget) {
+            current = height;
         } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+            break;
         }
-        p2++;
+    }
+
+    if (current == *max_element(all(h))) {
+        py;
+    } else {
+        pn;
     }
 }
 signed main() {
@@ -145,7 +146,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

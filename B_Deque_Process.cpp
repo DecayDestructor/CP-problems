@@ -113,39 +113,46 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+    int n;
+    cin >> n;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    string answer = "L";
+    int left = 1, right = n - 1;
+    int prev = arr[0];
+    while (left <= right) {
+        if (left == right) {
+            answer += "L";
+            break;
         }
-        p2++;
+        if (arr[left] > prev && arr[right] > prev) {
+            if (arr[right] > arr[left])
+                answer += "RL";
+            else
+                answer += "LR";
+            prev = min(arr[left], arr[right]);
+        } else if (arr[left] < prev && arr[right] < prev) {
+            if (arr[right] > arr[left])
+                answer += "LR";
+            else
+                answer += "RL";
+            prev = max(arr[left], arr[right]);
+        } else {
+            answer += "RL";
+            prev = arr[left];
+        }
+        left++;
+        right--;
     }
+    // cout << answer.length() << " : " << n << nl;
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

@@ -113,39 +113,29 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
+    int n;
+    cin >> n;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    vi dp(n + 1);
+    dp[n] = 0;
+    dp[n - 1] = 1;
+    for (int i = n - 2; i >= 0; i--) {
+        if (arr[i] > arr[i + 1]) {
+            dp[i] = dp[i + 1] + n - i;
         } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+            dp[i] = dp[i + 2] + n - i;
         }
-        p2++;
     }
+    int sum = accumulate(all(dp), 0ll);
+    cout << sum << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

@@ -112,32 +112,50 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+// C++ program to find highest power of 2 smaller
+// than or equal to n.
+#include <iostream>
+using namespace std;
+
+long long nextPowerOf2(long long n) {
+    if (n == 0) return 1;
+
+    if ((n & (n - 1)) == 0) {
+        return n << 1;
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
+
+    n--;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n |= n >> 32;
+    return n + 1;
+}
+void solve() {
+    int n, l, r, k;
+    cin >> n >> l >> r >> k;
+    // cout << n << " " << l << " " << r << " " << k << nl;
+    if (n % 2) {
+        cout << l << nl;
+        return;
+    } else {
+        if (n < 4) {
             cout << -1 << nl;
         } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
+            int maxi = nextPowerOf2(l);
+            // cout << maxi << nl;
+            if (maxi > r) {
+                cout << -1 << nl;
+            } else {
+                if (k == n || k == n - 1) {
+                    cout << maxi << nl;
+                } else {
+                    cout << l << nl;
+                }
             }
         }
-        p2++;
     }
 }
 signed main() {
@@ -145,7 +163,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

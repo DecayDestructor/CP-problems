@@ -115,30 +115,33 @@ int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n, m;
     cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    vector<vector<pair<int, int>>> adj(n + 1);
+    set<pair<int, int>> stt;
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
+    vi dist(n + 1, 1e15);
+    dist[1] = 0;
+    stt.insert({0, 1});
+    while (!stt.empty()) {
+        auto it = *stt.begin();
+        int distance = it.first;
+        int node = it.second;
+        stt.erase(it);
+        for (auto &it : adj[node]) {
+            int d = it.second;
+            int v = it.first;
+            if (distance + d <= dist[v]) {
+                stt.erase({dist[v], v});
+                dist[v] = distance + d;
+                stt.insert({dist[v], v});
             }
         }
-        p2++;
     }
+    for (int i = 1; i <= n; i++) cout << dist[i] << " ";
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

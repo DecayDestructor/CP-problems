@@ -113,32 +113,34 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
+    int n, m, k;
+    cin >> n >> m >> k;
     vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
+    for (auto &it : a) cin >> it;
     for (auto &it : b) cin >> it;
     sort(all(a));
-    // sort(all(b));
+    sort(all(b));
     int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
+    int answer = 0;
+    // for (auto &it : a) cout << it << " ";
+    // cout << nl;
+    // for (auto &it : b) cout << it << " ";
+    // cout << nl;
+    while (p1 < n && p2 < m) {
+        int lower = b[p2] - k;
+        int upper = b[p2] + k;
+        if (a[p1] >= lower && a[p1] <= upper) {
+            // cout << a[p1] << " : " << b[p2] << nl;
+            answer++;
+            p1++;
+            p2++;
+        } else if (a[p1] > upper) {
+            p2++;
         } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+            p1++;
         }
-        p2++;
     }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

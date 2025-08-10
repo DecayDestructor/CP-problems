@@ -65,7 +65,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -113,39 +113,26 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (auto& x : a) cin >> x;
+    long long ans = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            int x = max(a[n - 1], 2 * a[i]) - a[i] - a[j];
+            int k = upper_bound(a.begin(), a.begin() + j, x) - a.begin();
+            ans += j - k;
         }
-        p2++;
     }
+    cout << ans << '\n';
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

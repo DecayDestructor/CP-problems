@@ -115,37 +115,44 @@ int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n, m;
     cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
+    vector<vector<int>> a(n, vector<int>(m));
+    int mx = 0, cnt_mx = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cin >> a[i][j];
+            if (a[i][j] > mx) {
+                mx = a[i][j], cnt_mx = 1;
+            } else if (a[i][j] == mx) {
+                cnt_mx++;
             }
         }
-        p2++;
     }
+    vector<int> r(n), c(m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (a[i][j] == mx) {
+                r[i]++;
+                c[j]++;
+            }
+        }
+    }
+    int flag = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (r[i] + c[j] - (a[i][j] == mx) == cnt_mx) {
+                flag = 1;
+            }
+        }
+    }
+    cout << mx - flag << '\n';
 }
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

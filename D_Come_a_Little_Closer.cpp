@@ -116,30 +116,61 @@ void solve() {
     int n;
     cin >> n;
     vi x(n), y(n);
+    for (int i = 0; i < n; i++) cin >> x[i] >> y[i];
     if (n == 1) {
         cout << 1 << nl;
         return;
     }
-    for (int i = 0; i < n; i++) {
-        cin >> x[i] >> y[i];
-    }
     sort(all(x));
     sort(all(y));
-    int curr = 1;
-    bool can_shrink_x = false, can_shrink_y = false;
-    can_shrink_x = (x[n - 1] != x[n - 2]);
-    can_shrink_y = (y[n - 1] != y[n - 2]);
-    int answer = 1ll * (x[n - 1] - x[0] + 1) * (y[n - 1] - y[0] + 1);
-    cout << "initial " << answer << nl;
-    if (can_shrink_x) {
-        cout << "shifting x " << (1ll * (x[n - 2] - x[0] + 1) * (y[n - 1] - y[0] + 1)) << nl;
-        answer = min(answer, (1ll * (x[n - 2] - x[0] + 1) * (y[n - 1] - y[0] + 1)));
-    }
-    if (can_shrink_y) {
-        cout << "shifting y " << (1ll * (y[n - 2] - y[0] + 1) * (x[n - 1] - x[0] + 1)) << nl;
-        answer = min(answer, (1ll * (y[n - 2] - y[0] + 1) * (x[n - 1] - x[0] + 1)));
+    int row_empty_space = 0;
+    int col_empty_space = 0;
+    int row = x[n - 1] - x[0] + 1;
+    int col = y[n - 1] - y[0] + 1;
+    int answer = 1ll * row * col;
+    cout << "initial answer" << answer << nl;
+    // checking if I can reduce the initial columns
+    if (y[0] != y[1]) {
+        cout << "shifting first column" << nl;
+        int remaining_area = 1ll * row * (y[n - 1] - y[1] + 1);
+        if (n < remaining_area) {
+            answer = min(answer, 1ll * row * (y[n - 1] - y[1] + 1));
+        } else {
+            answer = min(answer, 1ll * (row + 1) * (y[n - 1] - y[1] + 1));
+        }
     }
     cout << answer << nl;
+    // checking if I can reduce the last column
+    if (y[n - 1] != y[n - 2]) {
+        cout << "last column reduced" << nl;
+        col = y[n - 2] - y[0] + 1;
+        int remaining_area = 1ll * row * col;
+        if (n < remaining_area) {
+            answer = min(answer, 1ll * row * col);
+        } else {
+            answer = min(answer, 1ll * (row + 1) * col);
+        }
+    }
+    cout << answer << nl;
+    col = y[n - 1] - y[0] + 1;
+    // checking for row
+    if (x[0] != x[1]) {
+        cout << "first row reduced" << nl;
+        row = x[n - 1] - x[1] + 1;
+        cout << row << " : " << col << nl;
+        int remainig_area = 1ll * row * col;
+        answer = min(answer, 1ll * row * (col + (n - 1 >= remainig_area)));
+    }
+    cout << answer << nl;
+    if (x[n - 1] != x[n - 2]) {
+        cout << "last row reduced" << nl;
+        row = x[n - 2] - x[0] + 1;
+        cout << row << " : " << col << nl;
+        int remainig_area = 1ll * row * col;
+        answer = min(answer, 1ll * row * (col + (n >= remainig_area)));
+    }
+    cout << answer << nl;
+    return;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

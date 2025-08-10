@@ -113,39 +113,32 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    int n;
+    cin >> n;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    if (n == 1) {
+        cout << arr[0] << nl;
+        return;
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
-        }
-        p2++;
+    vector<vector<int>> dp(n, vi(2));
+    dp[0][0] = dp[0][1] = arr[0];
+    dp[1][0] = arr[0] + arr[1];
+    dp[1][1] = arr[0];
+    for (int i = 2; i < n; i++) {
+        // who = me
+        dp[i][1] = min(dp[i - 2][0], dp[i - 1][0]);
+        dp[i][0] = min(dp[i - 2][1] + arr[i - 1], dp[i - 1][1]);
+        dp[i][0] += arr[i];
     }
+    cout << min(dp[n - 1][0], dp[n - 1][1]) << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

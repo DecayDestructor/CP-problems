@@ -112,32 +112,36 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+int get_floor(int a) {
+    return a / 100;
+}
 void solve() {
     int n, m;
     cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
-    }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+    vi arr(m);
+    for (auto &it : arr) cin >> it;
+    sort(all(arr));
+    int left = 0, right = m - 1;
+    int sum = 0;
+    vector<vi> answer(n);
+    for (int i = 0; i < n; i += 2) {
+        for (int j = 0; j < 6; j++) {
+            answer[i].push_back(arr[left]);
+            answer[i].push_back(arr[right]);
         }
-        p2++;
+        if (i + 1 < n)
+            for (int j = 0; j < 6; j++) {
+                answer[i + 1].push_back(arr[right]);
+                answer[i + 1].push_back(arr[left]);
+            }
+        left++;
+        right--;
+    }
+    for (auto &it : answer) {
+        for (int i = 0; i < 6; i++) {
+            cout << it[i] << " ";
+        }
+        cout << nl;
     }
 }
 signed main() {
@@ -145,7 +149,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

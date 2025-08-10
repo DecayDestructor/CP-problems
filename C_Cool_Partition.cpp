@@ -117,20 +117,27 @@ void solve() {
     cin >> n;
     vi arr(n);
     for (auto &it : arr) cin >> it;
-    set<int> curr, prev;
-    int answer = 0;
-    for (int i = 0; i < n; i++) {
-        while (i < n && !curr.count(arr[i])) {
-            i++;
-        }
-        if (i < n && curr.count(arr[i])) {
-            prev = curr;
-            curr.clear();
+    set<int> prev;
+    int answer = 1;
+    prev.insert(arr[0]);
+    for (int i = 1; i < n; i++) {
+        set<int> curr;
+        while (i < n && prev.size()) {
             curr.insert(arr[i]);
+            if (prev.count(arr[i]))
+                prev.erase(arr[i]);
+            if (prev.size())
+                i++;
         }
-        while (i < n && !prev.empty()) {
-                }
+        if (prev.size() == 0) {
+            answer++;
+            if (i < n) {
+                curr.insert(arr[i]);
+            }
+            prev = curr;
+        }
     }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

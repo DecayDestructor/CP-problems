@@ -113,31 +113,48 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
+    int n;
+    cin >> n;
+    vi arr(n);
+    int maxi = 0;
+    for (auto &it : arr) {
         cin >> it;
-        mpp[it]++;
+        maxi = max(maxi, it);
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
+    int gcd = arr[0];
+    for (auto &it : arr) {
+        gcd = __gcd(gcd, it);
+    }
+    int counter = 0;
+    for (auto &it : arr) {
+        if (it == gcd) {
+            counter++;
+        }
+    }
+    if (counter) {
+        cout << n - counter << nl;
+        return;
+    }
+    vector<int> dp(maxi + 1, 1e9);
+    queue<int> q;
+    for (auto &it : arr) {
+        dp[it] = 0;
+        q.push(it);
+    }
+    while (q.size()) {
+        int node = q.front();
+        q.pop();
+        for (auto &it : arr) {
+            int g = __gcd(node, it);
+            if (dp[g] == 1e9) {
+                dp[g] = min(dp[g], dp[node] + 1);
+                q.push(g);
+                if (g == gcd) {
+                    cout << n + dp[gcd] - 1 << nl;
+                    return;
+                }
             }
         }
-        p2++;
     }
 }
 signed main() {
@@ -145,7 +162,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

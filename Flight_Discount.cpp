@@ -115,30 +115,37 @@ int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n, m;
     cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    vector<vector<pair<int, int>>> adj(n + 1);
+    for (int i = 0; i < m; i++) {
+        int u, v, d;
+        cin >> u >> v >> d;
+        adj[u].push_back({v, d});
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
+    vi d(n + 1, 1e16);
+    vi p(n + 1, -1);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+    pq.push({0, 1});
+    d[1] = 0;
+    p[1] = 1;
+    while (!pq.empty()) {
+        int node = pq.top().second;
+        int dist = pq.top().first;
+        pq.pop();
+        for (auto &it : adj[node]) {
+            if (d[node] + it.second < d[it.first]) {
+                p[it.first] = node;
+                d[it.first] = d[node] + it.second;
+                pq.push({d[it.first], it.first});
             }
         }
-        p2++;
     }
+    int index = n;
+    int maxi = 0;
+    while (p[index] != index) {
+        maxi = max(maxi, d[index] - d[p[index]]);
+        index = p[index];
+    }
+    cout << d[n] - ceil_div(maxi, 2) << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

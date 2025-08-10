@@ -113,31 +113,22 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    int n, k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
+    if (k == 1 || k == n) {
+        cout << 1 << nl;
+        return;
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
-        }
-        p2++;
+    int left = -1, right = -1;
+    for (int i = 0; i < k - 1; i++)
+        if (s[i] == '#') left = i;
+    for (int i = n - 1; i > k - 1; i--)
+        if (s[i] == '#') right = i;
+    if (right == -1 && left == -1) {
+        cout << 1 << nl;
+        return;
     }
 }
 signed main() {
@@ -145,7 +136,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

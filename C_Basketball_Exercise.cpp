@@ -113,31 +113,32 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    int n;
+    cin >> n;
+    vector<vi> arr(2, vi(n));
+    for (int i = 0; i < 2; i++) {
+        for (auto &it : arr[i]) cin >> it;
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+    vector<vi> dp(3, vi(n + 1));
+    dp[0][1] = arr[0][0];
+    dp[1][1] = arr[1][0];
+    dp[2][1] = arr[0][0] + arr[1][0];
+    for (int i = 2; i <= n; i++) {
+        dp[0][i] = max(dp[1][i - 2], max(dp[1][i - 1], dp[2][i - 2]));
+        dp[0][i] += arr[0][i - 1];
+        dp[1][i] = max(dp[0][i - 1], max(dp[0][i - 2], dp[2][i - 2]));
+        dp[1][i] += arr[1][i - 1];
+        dp[2][i] = max(dp[2][i - 2], max(dp[1][i - 2], dp[0][i - 2]));
+        dp[2][i] += arr[0][i - 1] + arr[1][i - 1];
+    }
+
+    // cout << max(dp[0][n], max(dp[1][n], dp[2][n])) << nl;
+    for (int i = 0; i < 3; i++) {
+        cout << i << " ";
+        for (auto &it : dp[i]) {
+            cout << it << " ";
         }
-        p2++;
+        cout << nl;
     }
 }
 signed main() {

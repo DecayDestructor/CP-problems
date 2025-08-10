@@ -51,7 +51,7 @@ map<int, int> primeFactorisation(ll n) {
 vector<ll> sieveOfEratosthenes(int n) {
     vector<ll> sieve(n + 1, 1);
     sieve[0] = sieve[1] = 0;  // 0 and 1 are not primes
-    for (int i = 2; i * i <= n; i++) {
+    for (int i = 2; i * i; i++) {
         if (sieve[i]) {
             for (int j = i * i; j <= n; j += i) {
                 sieve[j] = 0;  // Mark multiples of i as non-prime
@@ -113,39 +113,49 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vi a(n), b(m);
-    map<int, int> mpp;
-    for (auto &it : a) {
-        cin >> it;
-        mpp[it]++;
+    string s;
+    int n;
+    cin >> n;
+    cin >> s;
+    if (s[0] == '1') s = "0" + s;
+    int base = 0;
+    // cout << s << nl;
+    for (int i = 1; i < s.length(); i++) {
+        if (s[i] != s[i - 1]) base++;
     }
-    for (auto &it : b) cin >> it;
-    sort(all(a));
-    // sort(all(b));
-    int p1 = 0, p2 = 0;
-    while (p2 < m) {
-        auto lb = mpp.upper_bound(b[p2]);
-        if (lb == mpp.begin()) {
-            cout << -1 << nl;
-        } else {
-            auto new_it = prev(lb);
-            cout << new_it->first << nl;
-            new_it->second--;
-            if (new_it->second == 0) {
-                mpp.erase(new_it);
-            }
+    // cout << base << nl;
+    // cout << base + n << nl;
+    string temp;
+    temp += s[0];
+    for (int i = 1; i < s.length(); i++) {
+        if (s[i] != temp.back()) {
+            temp += s[i];
         }
-        p2++;
     }
+    bool two = false, one = false;
+    string one_check = "010";
+    string two_check = "0101";
+    for (int i = 0; i + 3 <= temp.length(); i++) {
+        string sub = temp.substr(i, 3);
+        string sub2 = temp.substr(i, 4);
+        // cout << sub << " : " << sub2 << nl;
+        if (sub == one_check) one = true;
+        if (sub2 == two_check) two = true;
+    }
+    if (two)
+        cout << base + n - 2 << nl;
+    else if (one)
+        cout << base + n - 1 << nl;
+    else
+        cout << base + n << nl;
+    // cout << temp << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }
