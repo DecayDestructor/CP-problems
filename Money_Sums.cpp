@@ -112,51 +112,25 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-int helper(string &s, string &t, int i, int j, vector<vector<int>> &dp) {
-    if (i < 0 && j < 0) return 0;
-    if (i < 0) {
-        return 1 + helper(s, t, i, j - 1, dp);
-    }
-    if (j < 0) {
-        return 1 + helper(s, t, i - 1, j, dp);
-    }
-    if (dp[i][j] != 1e4) {
-        return dp[i][j];
-    }
-    // cout << i << " " << j << nl;
-    if (s[i] == t[j]) {
-        return dp[i][j] = helper(s, t, i - 1, j - 1, dp);
-    } else {
-        int replace = 1 + helper(s, t, i - 1, j - 1, dp);
-        int erase = 1 + helper(s, t, i - 1, j, dp);
-        int add = 1 + helper(s, t, i, j - 1, dp);
-        return dp[i][j] = min(replace, min(erase, add));
-    }
-    return dp[i][j];
-}
 void solve() {
-    string s, t;
-    cin >> s >> t;
-    int l1 = s.length();
-    int l2 = t.length();
-    vector<vector<int>> dp(l1 + 1, vi(l2 + 1, 0));
-    // cout << helper(s, t, l1 - 1, l2 - 1, dp) << nl;
-    for (int i = 0; i <= l1; i++) dp[i][0] = i;
-    for (int i = 0; i <= l2; i++) dp[0][i] = i;
-
-    for (int i = 1; i <= l1; i++) {
-        for (int j = 1; j <= l2; j++) {
-            if (s[i - 1] == t[j - 1])
-                dp[i][j] = dp[i - 1][j - 1];
-            else {
-                int replace = 1 + dp[i - 1][j - 1];
-                int erase = 1 + dp[i - 1][j];
-                int add = 1 + dp[i][j - 1];
-                dp[i][j] = min(replace, min(add, erase));
-            }
+    int n;
+    cin >> n;
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    int sum = accumulate(all(arr), 0ll);
+    vector<bool> dp(sum + 1, false);
+    dp[0] = true;
+    for (int i = 0; i < n; i++) {
+        for (int total = sum; total >= arr[i]; total--) {
+            dp[total] = dp[total] | dp[total - arr[i]];
         }
     }
-    cout << dp[l1][l2] << nl;
+    int total = accumulate(all(dp), 0ll);
+    cout << total - 1 << nl;
+    for (int i = 1; i <= sum; i++) {
+        if (dp[i]) cout << i << " ";
+    }
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

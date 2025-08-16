@@ -112,51 +112,36 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-int helper(string &s, string &t, int i, int j, vector<vector<int>> &dp) {
-    if (i < 0 && j < 0) return 0;
-    if (i < 0) {
-        return 1 + helper(s, t, i, j - 1, dp);
-    }
-    if (j < 0) {
-        return 1 + helper(s, t, i - 1, j, dp);
-    }
-    if (dp[i][j] != 1e4) {
-        return dp[i][j];
-    }
-    // cout << i << " " << j << nl;
-    if (s[i] == t[j]) {
-        return dp[i][j] = helper(s, t, i - 1, j - 1, dp);
-    } else {
-        int replace = 1 + helper(s, t, i - 1, j - 1, dp);
-        int erase = 1 + helper(s, t, i - 1, j, dp);
-        int add = 1 + helper(s, t, i, j - 1, dp);
-        return dp[i][j] = min(replace, min(erase, add));
-    }
-    return dp[i][j];
-}
+const int MOD = (int)1e9 + 7;
 void solve() {
-    string s, t;
-    cin >> s >> t;
-    int l1 = s.length();
-    int l2 = t.length();
-    vector<vector<int>> dp(l1 + 1, vi(l2 + 1, 0));
-    // cout << helper(s, t, l1 - 1, l2 - 1, dp) << nl;
-    for (int i = 0; i <= l1; i++) dp[i][0] = i;
-    for (int i = 0; i <= l2; i++) dp[0][i] = i;
-
-    for (int i = 1; i <= l1; i++) {
-        for (int j = 1; j <= l2; j++) {
-            if (s[i - 1] == t[j - 1])
-                dp[i][j] = dp[i - 1][j - 1];
-            else {
-                int replace = 1 + dp[i - 1][j - 1];
-                int erase = 1 + dp[i - 1][j];
-                int add = 1 + dp[i][j - 1];
-                dp[i][j] = min(replace, min(add, erase));
+    int n, m;
+    cin >> n >> m;
+    vector<vi> dp(n, vi(m + 2));
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    if (arr[0] == 0) {
+        for (int i = 1; i <= m; i++) {
+            dp[0][i] = 1;
+        }
+    } else {
+        dp[0][arr[0]] = 1;
+    }
+    for (int i = 1; i < n; i++) {
+        if (arr[i] != 0) {
+            int key = arr[i];
+            dp[i][key] = mod_add(dp[i][key], mod_add(dp[i - 1][key - 1], mod_add(dp[i - 1][key], dp[i - 1][key + 1], MOD), MOD), MOD);
+        } else {
+            for (int j = 1; j <= m; j++) {
+                int key = j;
+                dp[i][key] = mod_add(dp[i][key], mod_add(dp[i - 1][key - 1], mod_add(dp[i - 1][key], dp[i - 1][key + 1], MOD), MOD), MOD);
             }
         }
     }
-    cout << dp[l1][l2] << nl;
+    int sum = 0;
+    for (auto &it : dp[n - 1]) {
+        sum = mod_add(sum, it, MOD);
+    }
+    cout << sum % MOD << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
