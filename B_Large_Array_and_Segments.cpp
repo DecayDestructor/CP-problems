@@ -112,35 +112,32 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-const int MOD = 998244353;
 void solve() {
-    int n;
-    cin >> n;
+    int n, k, x;
+    cin >> n >> k >> x;
     vi arr(n);
     for (auto &it : arr) cin >> it;
-    vvll dp(n + 1, vll(2, 0ll));  // dp[i][1]=number of configurations such that the i'th person is a liar, dp[i][0], when ith person is honest.
-    arr.insert(arr.begin(), 0);
-    if (arr[1] == 0) {
-        dp[1][1] = 1;
-        dp[1][0] = 1;
-    } else {
-        dp[1][1] = 1;
+    int sum = accumulate(all(arr), 0ll);
+    // cout << sum << nl;
+    int totalSum = 1ll * sum * k;
+    if (totalSum < x) {
+        cout << 0 << nl;
+        return;
     }
-    for (int i = 2; i <= n; i++) {
-        // honest-honest
-        if (arr[i] == arr[i - 1]) {
-            dp[i][0] = mod_add(dp[i - 1][0], dp[i][0], MOD);
-        }
-        // honest-liar
-        dp[i][1] = mod_add(dp[i - 1][0], dp[i][1], MOD);
-
-        // liar-honest
-        if (arr[i - 2] == arr[i] - 1)
-            dp[i][0] = mod_add(dp[i][0], dp[i - 1][1], MOD);
+    // cout << totalSum << nl;
+    int skips = x / sum;
+    int rem = x % sum;
+    // cout << skips << " : " << rem << nl;
+    int i = n - 1;
+    int add = rem == 0;
+    while (rem > 0) {
+        // cout << i << nl;
+        if (rem <= arr[i]) break;
+        rem -= arr[i--];
     }
-    cout << (dp[n][1] + dp[n][0]) % MOD << nl;
+    // cout << i << nl;
+    cout << 1ll * (k - skips - 1) * n + i + 1 + add << nl;
 }
-
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

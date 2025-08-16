@@ -115,8 +115,9 @@ int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n;
     cin >> n;
-    vi arr(n);
-    for (auto &it : arr) cin >> it;
+    vi a(n);
+    for (auto &it : a) cin >> it;
+    cout << min(a[0], a[1]) + a[0] << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

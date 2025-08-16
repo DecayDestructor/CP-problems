@@ -112,35 +112,21 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-const int MOD = 998244353;
 void solve() {
-    int n;
-    cin >> n;
-    vi arr(n);
-    for (auto &it : arr) cin >> it;
-    vvll dp(n + 1, vll(2, 0ll));  // dp[i][1]=number of configurations such that the i'th person is a liar, dp[i][0], when ith person is honest.
-    arr.insert(arr.begin(), 0);
-    if (arr[1] == 0) {
-        dp[1][1] = 1;
-        dp[1][0] = 1;
-    } else {
-        dp[1][1] = 1;
+    int n, m, k;
+    cin >> n >> m >> k;
+    vi arr(n, -1);
+    int totalNums = n / (m + 1);
+    if (totalNums < k) {
+        totalNums = k;
     }
-    for (int i = 2; i <= n; i++) {
-        // honest-honest
-        if (arr[i] == arr[i - 1]) {
-            dp[i][0] = mod_add(dp[i - 1][0], dp[i][0], MOD);
-        }
-        // honest-liar
-        dp[i][1] = mod_add(dp[i - 1][0], dp[i][1], MOD);
-
-        // liar-honest
-        if (arr[i - 2] == arr[i] - 1)
-            dp[i][0] = mod_add(dp[i][0], dp[i - 1][1], MOD);
+    // cout << totalNums << nl;
+    for (int i = 0; i < n; i++) {
+        arr[i] = i % totalNums;
     }
-    cout << (dp[n][1] + dp[n][0]) % MOD << nl;
+    for (auto &it : arr) cout << it << " ";
+    cout << nl;
 }
-
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
