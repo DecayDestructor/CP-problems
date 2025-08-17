@@ -112,35 +112,48 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+void helper(vi indexes, vi &arr, int n) {
+    if (indexes.size() == 0) return;
+    vi lower, higher;
+    int counter = 0;
+    int pivotIdx = rand() % indexes.size();
+    int curr = indexes[pivotIdx];
+    swap(indexes[0], indexes[pivotIdx]);
+    for (int i = 1; i < indexes.size(); i++) {
+        cout << "? " << curr << " " << indexes[i] << endl;
+        string s;
+        cin >> s;
+        if (s == "YES") {
+            counter++;
+            higher.push_back(indexes[i]);
+        } else {
+            lower.push_back(indexes[i]);
+        }
+    }
+    arr[curr - 1] = n - counter;
+    // cout << "assigning " << n - counter << " at " << curr - 1 << endl;
+    helper(lower, arr, arr[curr - 1] - 1);
+    helper(higher, arr, n);
+    return;
+}
 void solve() {
-    int n1, n2;
-    cin >> n1 >> n2;
-    map<int, int> mpp;
-    vi arr1, arr2;
-    for (int i = 0; i < n1; i++) {
-        cin >> arr1[i];
-        mpp[arr1[i]]++;
-    }
-    for (int i = 0; i < n2; i++) {
-        cin >> arr2[i];
-    }
-    for (auto &it : arr2) {
-        bool ok = false;
-        while (it) {
-            if (mpp.find(it) != mpp.end()) {
-                mpp[it]--;
-                ok = true;
-                break;
-            }
-                }
-    }
+    int n;
+    cin >> n;
+    vi arr(n);
+    vi indexes;
+    for (int i = 1; i <= n; i++) indexes.push_back(i);
+    helper(indexes, arr, n);
+    cout << "! ";
+    for (auto &it : arr) cout << it << " ";
+    cout << nl;
 }
 signed main() {
+    srand(time(0));
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

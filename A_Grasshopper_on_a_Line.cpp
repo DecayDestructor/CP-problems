@@ -113,26 +113,14 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n1, n2;
-    cin >> n1 >> n2;
-    map<int, int> mpp;
-    vi arr1, arr2;
-    for (int i = 0; i < n1; i++) {
-        cin >> arr1[i];
-        mpp[arr1[i]]++;
-    }
-    for (int i = 0; i < n2; i++) {
-        cin >> arr2[i];
-    }
-    for (auto &it : arr2) {
-        bool ok = false;
-        while (it) {
-            if (mpp.find(it) != mpp.end()) {
-                mpp[it]--;
-                ok = true;
-                break;
-            }
-                }
+    int n, k;
+    cin >> n >> k;
+    if (n % k != 0) {
+        cout << 1 << nl;
+        cout << n << nl;
+    } else {
+        cout << 2 << nl;
+        cout << n - 1 << " " << 1 << nl;
     }
 }
 signed main() {

@@ -113,27 +113,21 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n1, n2;
-    cin >> n1 >> n2;
-    map<int, int> mpp;
-    vi arr1, arr2;
-    for (int i = 0; i < n1; i++) {
-        cin >> arr1[i];
-        mpp[arr1[i]]++;
+    string s;
+    cin >> s;
+    int n = s.length();
+    int balance = 0, ans = 0;
+    for (int i = 0; i < n; i++) {
+        if (s[i] == '(')
+            balance++;
+        else
+            balance--;
+        if (balance == 0) ans++;
     }
-    for (int i = 0; i < n2; i++) {
-        cin >> arr2[i];
-    }
-    for (auto &it : arr2) {
-        bool ok = false;
-        while (it) {
-            if (mpp.find(it) != mpp.end()) {
-                mpp[it]--;
-                ok = true;
-                break;
-            }
-                }
-    }
+    if (ans > 1)
+        py;
+    else
+        pn;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

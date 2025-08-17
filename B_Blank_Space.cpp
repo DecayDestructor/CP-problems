@@ -113,27 +113,20 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n1, n2;
-    cin >> n1 >> n2;
-    map<int, int> mpp;
-    vi arr1, arr2;
-    for (int i = 0; i < n1; i++) {
-        cin >> arr1[i];
-        mpp[arr1[i]]++;
+    int n;
+    cin >> n;
+    vi a(n);
+    int cnt = 0, ans = 0;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        if (a[i] == 0) {
+            cnt++;
+        } else {
+            ans = max(ans, cnt);
+            cnt = 0;
+        }
     }
-    for (int i = 0; i < n2; i++) {
-        cin >> arr2[i];
-    }
-    for (auto &it : arr2) {
-        bool ok = false;
-        while (it) {
-            if (mpp.find(it) != mpp.end()) {
-                mpp[it]--;
-                ok = true;
-                break;
-            }
-                }
-    }
+    cout << max(ans, cnt) << endl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
