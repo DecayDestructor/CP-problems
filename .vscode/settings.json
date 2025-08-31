@@ -10,6 +10,8 @@
     "valarray": "cpp",
     "cstdlib": "cpp",
     "vector": "cpp",
-    "iomanip": "cpp"
+    "iomanip": "cpp",
+    "random": "cpp",
+    "limits": "cpp"
   }
 }
