@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,6 +13,8 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
@@ -21,9 +23,8 @@ ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -118,24 +119,22 @@ void solve() {
     vi arr(n);
     for (auto &it : arr) cin >> it;
     sort(all(arr));
-    int sum = 0;
-    int total = accumulate(all(arr), 0);
-    int i = 0;
-    int answer = 0;
-    while (i < n && answer < total + 1 / 2) {
-        if (answer + arr[i] <= (total + 1) / 2) {
-            // sum += arr[i];
-            answer += arr[i];
-        } else {
-            answer = (total + 1) / 2;
-            break;
-        }
-        i++;
+
+    // prefix sum
+    vi sum(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+        sum[i] = sum[i - 1] + arr[i - 1];
     }
-    // cout << i << nl;
-    answer += n - i;
-    cout << answer << nl;
+
+    long long tmp = (sum[n] + 1) / 2;
+    int c = 0;
+    for (int i = 1; i <= n; i++) {
+        if (sum[i] > tmp) c++;
+    }
+
+    cout << tmp + c << "\n";
 }
+
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);

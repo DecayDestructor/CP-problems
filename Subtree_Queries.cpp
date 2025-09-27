@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -113,48 +112,107 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-int ceil_div(int a, int b) { return (a + b - 1) / b; }
-void solve() {
+struct SegmentTree {
     int n;
-    cin >> n;
-    vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
-    }
-    for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
-    }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
+    vi tree;
+    SegmentTree(vi &a) {
+        n = a.size();
+        tree.resize(2 * n);
+        for (int i = 0; i < n; i++) {
+            tree[i + n] = a[i];
         }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
+        for (int i = n - 1; i >= 0; i--) {
+            tree[i] = tree[i << 1] + tree[i << 1 | 1];
+        }
+        // for (int i = 1; i <= 2 * n - 1; i++) cout << tree[i] << " ";
+        // cout << nl;
+    }
+    int query(int l, int r) {  //[l,r]
+        l = l + n;
+        r = r + n;
+        int res = 0;  // neutral element for sum
+        // cout << l << " : " << r << nl;
+        while (l <= r) {
+            if (l % 2) {
+                // cout << "adding " << tree[l] << nl;
+                res += tree[l++];
+            }
+            if (r % 2 == 0) {
+                // cout << "adding " << tree[r] << nl;
+                res += tree[r--];
+            }
+            l = l / 2;
+            r = r / 2;
+        }
+        return res;
+    }
+    void modify(int p, int val) {
+        p = p + n;
+        tree[p] = val;
+        p /= 2;
+        while (p >= 1) {
+            tree[p] = tree[p << 1] + tree[p << 1 | 1];
+            p = p / 2;
+        }
+        // for (int i = 1; i <= 2 * n - 1; i++) cout << tree[i] << " ";
+        // cout << nl;
+    }
+};
+
+int ceil_div(int a, int b) { return (a + b - 1) / b; }
+vi start, ending, val, flat;
+vector<vi> adj;
+int timer = 0;
+
+void dfs(int node, int par) {
+    start[node] = timer++;
+    flat[timer - 1] = val[node];
+
+    for (auto &it : adj[node]) {
+        if (it != par) {
+            dfs(it, node);
         }
     }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
+    ending[node] = timer;
+}
+void solve() {
+    int n, q;
+    cin >> n >> q;
+    start.resize(n);
+    ending.resize(n);
+    val.resize(n);
+    flat.resize(n);
+    adj.resize(n);
+    for (int i = 0; i <= n - 1; i++) cin >> val[i];
+    for (int i = 1; i <= n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[--u].push_back(--v);
+        adj[v].push_back(u);
+    }
+    dfs(0, -1);
+    SegmentTree ST(flat);
+    while (q--) {
+        int q2, u, v;
+        cin >> q2;
+        if (q2 == 1) {
+            cin >> u >> v;
+            u--;
+            int st = start[u];
+            ST.modify(st, v);
+        } else {
+            cin >> u;
+            u--;
+            cout << ST.query(start[u], ending[u] - 1) << nl;
+        }
+    }
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

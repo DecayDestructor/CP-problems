@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -113,48 +112,53 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
+const int MOD = 1e9 + 7;
+ll lcm(ll a, ll b) {
+    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
+}
+ll lcm_mod(ll a, ll b, ll mod) {
+    ll g = __gcd(a, b);
+    // lcm(a,b) = (a/gcd) * b = a * (b/gcd)
+    // We need to be careful about overflow and modular arithmetic
+    a %= mod;
+    b %= mod;
+    ll result = (a / g) % mod;
+    result = (1ll * result * (b % mod)) % mod;
+    return result % MOD;
+}
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n;
     cin >> n;
-    vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
-    }
+    vi arr(n + 1);
+    // int answer = 1;
+    for (int i = 1; i <= n; i++) cin >> arr[i];
+    vi visited(n + 1);
+    vi ans;
     for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
-    }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
-        }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
+        if (!visited[i]) {
+            int count = 0;
+            int curr = i;
+            do {
+                visited[curr] = 1;
+                count++;
+                curr = arr[curr];
+            } while (i != curr);
+            ans.push_back(count);
         }
     }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
+    int answer = ans[0];
+    for (int i = 1; i < ans.size(); i++) {
+        answer = lcm(answer, ans[i]);
+    }
+    cout << answer % MOD << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -115,39 +114,43 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n;
-    cin >> n;
-    vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
-    }
+    int n, m;
+    cin >> n >> m;
+    vector<vi> mpp(m + 1);
+    int curr = 1;
+    set<int> stt;
     for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
-    }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
-        }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
+        int l;
+        cin >> l;
+        while (l--) {
+            int x;
+            cin >> x;
+            mpp[x].push_back(i);
         }
     }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
+    for (int it = 1; it <= m; it++) {
+        if (mpp[it].size() == 1) {
+            stt.insert(mpp[it][0]);
+        }
+        if (mpp[it].size() == 0) {
+            pn;
+            return;
+        }
+    }
+    int flexible = 0;
+    for (int i = 1; i <= m; i++) {
+        int count = 0;
+        for (auto &it : mpp[i]) {
+            if (!stt.count(it))
+                count++;
+        }
+        if (count >= 2)
+            flexible++;
+    }
+    if (flexible >= 2)
+        py;
+    else
+        pn;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -155,8 +158,27 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
-    while (t--) {
+    // if (t == 6)
+    while (t--)
         solve();
-    }
+    // }
+    // else {
+    //     for (int i = 0; i < t; i++) {
+    //         int n, m;
+    //         cin >> n >> m;
+    //         for (int i = 0; i <= n; i++) {
+    //             int l;
+    //             cin >> l;
+    //             while (l--) {
+    //                 int x;
+    //                 cin >> x;
+    //                 if (i == 182)
+    //                     cout << x << " ";
+    //             }
+    //             if (i == 182)
+    //                 cout << nl;
+    //         }
+    //     }
+    // }
     return 0;
 }

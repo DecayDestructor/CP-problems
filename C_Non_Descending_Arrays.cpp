@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -114,40 +113,37 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+const int MOD = 998244353;
 void solve() {
     int n;
     cin >> n;
-    vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
-    }
-    for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
-    }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
+    vi a(n), b(n);
+    for (auto &it : a) cin >> it;
+    for (auto &it : b) cin >> it;
+    vector<vi> dp(n + 1, vi(2));
+    dp[1][0] = 1;
+    dp[1][1] = 1;
+    for (int i = 2; i <= n; i++) {
+        // swap i and swap i-1
+        int j = i - 1;
+        if (a[j] >= a[j - 1] && b[j] >= b[j - 1]) {
+            dp[i][1] = mod_add(dp[i][1], dp[i - 1][1], MOD);
         }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
+        // swap i and dont swap i-1
+        if (a[j] >= b[j - 1] && b[j] >= a[j - 1]) {
+            dp[i][1] = mod_add(dp[i][1], dp[i - 1][0], MOD);
+        }
+
+        // dont swap i and swap i-1
+        if (a[j] >= b[j - 1] && b[j] >= a[j - 1]) {
+            dp[i][0] = mod_add(dp[i][0], dp[i - 1][1], MOD);
+        }
+        // dont swap i and dont swap i-1
+        if (a[j] >= a[j - 1] && b[j] >= b[j - 1]) {
+            dp[i][0] = mod_add(dp[i][0], dp[i - 1][0], MOD);
         }
     }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
+    cout << mod_add(dp[n][0], dp[n][1], MOD) << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

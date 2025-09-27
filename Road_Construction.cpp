@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -114,40 +113,67 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+class DisjointSet {
+    vector<int> rank, parent, size;
+
+   public:
+    DisjointSet(int n) {
+        rank.resize(n + 1, 0);
+        parent.resize(n + 1);
+        size.resize(n + 1);
+        for (int i = 0; i <= n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    }
+
+    int findUPar(int node) {
+        if (node == parent[node])
+            return node;
+        parent[node] = findUPar(parent[node]);
+        return parent[node];
+    }
+
+    void unionByRank(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if (ulp_u == ulp_v)
+            return;
+        if (rank[ulp_u] < rank[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+        } else if (rank[ulp_v] < rank[ulp_u]) {
+            parent[ulp_v] = ulp_u;
+        } else {
+            parent[ulp_v] = ulp_u;
+            rank[ulp_u]++;
+        }
+    }
+
+    void unionBySize(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if (ulp_u == ulp_v)
+            return;
+        if (size[ulp_u] < size[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+            size[ulp_v] += size[ulp_u];
+        } else {
+            parent[ulp_v] = ulp_u;
+            size[ulp_u] += size[ulp_v];
+        }
+    }
+};
+int n, m;
+vvi adj;
 void solve() {
-    int n;
-    cin >> n;
-    vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
+    cin >> n >> m;
+    adj.resize(n + 1);
+    DisjointSet ds(n + 1);
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        ds.unionByRank(u, v);
     }
-    for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
-    }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
-        }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
-        }
-    }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

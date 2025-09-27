@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,6 +13,8 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
@@ -21,9 +23,8 @@ ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -69,8 +70,17 @@ bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
+ll binpow(ll a, ll b, ll m) {
+    a %= m;
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1) res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
 ll binpow(ll a, ll b) {
-    // a %= m;
     ll res = 1;
     while (b > 0) {
         if (b & 1) res = res * a;
@@ -79,70 +89,66 @@ ll binpow(ll a, ll b) {
     }
     return res;
 }
-// ll mminvprime(ll a, ll m) {
-//     return binpow(a, m - 2, m);
-// }
-// ll mod_add(ll a, ll b, ll m) {
-//     a = a % m;
-//     b = b % m;
-//     return (((a + b) % m) + m) % m;
-// }
-// ll mod_mul(ll a, ll b, ll m) {
-//     a = a % m;
-//     b = b % m;
-//     return (((a * b) % m) + m) % m;
-// }
-// ll mod_sub(ll a, ll b, ll m) {
-//     a = a % m;
-//     b = b % m;
-//     return (((a - b) % m) + m) % m;
-// }
-// ll mod_div(ll a, ll b, ll m) {
-//     a = a % m;
-//     b = b % m;
-//     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
-// }
-// vi primes = sieveOfEratosthenes(2e5);
-vll spf(2e5 + 1, 1e9);
-vector<pair<int, int>> primeFactorization(int x) {
-    vector<pair<int, int>> ans;
-
-    while (x != 1) {
-        int prime = spf[x];
-        int cnt = 0;
-        while (x % prime == 0) {
-            cnt++;
-            x = x / prime;
-        }
-        // cout << prime << " : " << cnt << nl;
-        ans.push_back({prime, cnt});
-    }
-
-    return ans;
+ll mminvprime(ll a, ll m) {
+    return binpow(a, m - 2, m);
 }
-int maxN = 2e5;
+ll mod_add(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a + b) % m) + m) % m;
+}
+ll mod_mul(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a * b) % m) + m) % m;
+}
+ll mod_sub(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (((a - b) % m) + m) % m;
+}
+ll mod_div(ll a, ll b, ll m) {
+    a = a % m;
+    b = b % m;
+    return (mod_mul(a, mminvprime(b, m), m) + m) % m;
+}
+int ceil_div(int a, int b) { return (a + b - 1) / b; }
+vi primes;
 void solve() {
     int n;
     cin >> n;
-    vll arr(n);
-    vvll mpp(maxN);
-    for (auto &it : arr) {
-        cin >> it;
-        vector<pair<int, int>> fac = primeFactorization(it);
-        for (auto &it : fac) {
-            mpp[it.first].push_back(it.second);
+    vi arr(n);
+    for (auto &it : arr) cin >> it;
+    int answer = 1;
+    int maxi = *max_element(all(arr));
+    vi sieve = sieveOfEratosthenes((int)maxi + 1);
+    for (int i = 2; i <= sieve.size(); i++) {
+        if (sieve[i]) {
+            primes.push_back(i);
         }
     }
-    int answer = 1;
-    for (int i = 1; i <= maxN; i++) {
-        vi it = mpp[i];
-        sort(all(it));
-        if (it.size() < n - 1) continue;
-        if (it.size() == n) {
-            answer *= (1ll * binpow(i, it[1]));
-        } else {
-            answer *= (1ll * binpow(i, it[0]));
+    if (n == 2) {
+        cout << lcm(arr[0], arr[1]) << nl;
+        return;
+    }
+    for (auto &it : primes) {
+        if (it > maxi) break;
+        int count = 0, k = 60;
+        int p = it;
+        while (p <= maxi) {
+            int no = 0;
+            for (auto &it : arr) {
+                if (it % p) no++;
+                if (no >= 2) break;
+            }
+            if (no >= 2) break;
+            p = p * it;
         }
+        // if (it != p)
+        //     cout << it << " : " << p / it << nl;
+        answer = 1ll * p * answer;
+        p = p / it;
+        answer /= it;
     }
     cout << answer << nl;
 }
@@ -151,17 +157,9 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    vector<bool> isPrime(maxN, true);
+    // cin >> t;
 
-    for (long long i = 2; i < maxN; i++) {
-        if (isPrime[i]) {
-            spf[i] = i;
-            for (long long j = i * i; j < maxN; j += i) {
-                isPrime[j] = false;
-                spf[j] = min(spf[j], (int)i);
-            }
-        }
-    }
+    // cout << primes.size() << nl;
     while (t--) {
         solve();
     }

@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -116,38 +115,57 @@ ll mod_div(ll a, ll b, ll m) {
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n;
-    cin >> n;
-    vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
+    string s;
+    cin >> n >> s;
+    if (n == 1 || n == 2) {
+        py;
+        return;
+    }
+    // s.push_back('1');
+    vector<vector<bool>> dp(n + 1, vector<bool>(2, false));  // dp[i][k] = if answer is possible between 0 -- i if ith rabbit looks towards k (0=left, 1=right)
+    if (s[0] == '0') {
+        dp[0][0] = true;
+    }
+    if (s[1] == '0') {
+        if (s[0] == '0') {
+            dp[1][0] = true;
+            dp[0][1] = true;
+        }
+    }
+
+    for (int i = 2; i < n; i++) {
+        if (s[i] == '0') {
+            if (s[i - 1] == '1' && s[i - 2] == '0') {  // 0 1 0
+                if (dp[i - 2][0] == false) {
+                    dp[i][1] = false;
+                }
+                if (dp[i - 2][1] == false) {
+                    dp[i][0] = false;
+                } else
+                    dp[i][0] = true;
+            } else if (s[i - 1] == '1' && s[i - 2] == '1') {  // 1 1 0
+                dp[i][0] = false;
+            } else if (s[i - 1] == '0' && s[i - 2] == '0') {  // 0 0 0
+                if (dp[i - 1][0] || dp[i - 1][1]) dp[i][0] = true;
+            } else {  // 1 0 0
+                dp[i - 1][1] = true;
+                dp[i][0] = true;
+            }
+        }
+    }
+    if (s[n - 1] == '0') {
+        dp[n - 1][1] = true;
+    }
     for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
-    }
-    for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
-    }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
-        }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
+        if (s[i] == '0') {
+            if (!dp[i][0] && !dp[i][1]) {
+                // cout << i << nl;
+                pn;
+                return;
+            }
         }
     }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
+    py;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -155,8 +173,18 @@ signed main() {
     cout.tie(NULL);
     int t = 1;
     cin >> t;
+    // if (t == 12)
     while (t--) {
         solve();
     }
+    // else {
+    //     for (int i = 0; i < t; i++) {
+    //         int n;
+    //         cin >> n;
+    //         string s;
+    //         cin >> s;
+    //         if (i == 211) cout << n << nl << s << nl;
+    //     }
+    // }
     return 0;
 }

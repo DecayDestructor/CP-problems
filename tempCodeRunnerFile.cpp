@@ -1,27 +1,10 @@
-#include <bits/stdc++.h>
-#include <iostream>
-using namespace std;
-int main()
-{
-    int n;
-    cin >> n;
-    int answer = 0;
-    int digit;
-    for (int i = 1; i <= n; i++)
-    {
-        int counter = 0;
-        for (int i = 1; i <= 3; i++)
-        {
-            cin >> digit;
-            if (digit == 1)
-            {
-                counter++;
-            }
-        }
-        if (counter >= 2)
-        {
-            cout << "YES" << endl;
+
+    while (q--) {
+        int q1, u, v;
+        cin >> q1 >> u >> v;
+        if (q1 == 1) {
+            ST.modify(u - 1, v);
+        } else {
+            cout << ST.query(u - 1, v - 1) << nl;
         }
     }
-    return 0;
-}

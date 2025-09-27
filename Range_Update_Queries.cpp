@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -67,7 +66,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -114,47 +113,87 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+struct SegmentTree {
+    int n;  // actual array size
+    vector<int> t;
+
+    // Constructor - initializes with array
+    SegmentTree(vector<int>& a) {
+        n = a.size();
+        t.resize(2 * n);
+        build(a);
+    }
+
+    // Constructor - initializes with size (all zeros)
+    SegmentTree(int size) {
+        n = size;
+        t.assign(2 * n, 0);
+    }
+
+    // Build the segment tree from array
+    void build(vector<int>& a) {
+        // Assign leaves
+        for (int i = 0; i < n; i++) t[i + n] = a[i];
+
+        // Build internal nodes (sum instead of XOR)
+        for (int i = n - 1; i > 0; --i)
+            t[i] = t[i << 1] + t[i << 1 | 1];
+    }
+
+    // Modify value at position p to 'value'
+    void modify(int p, int value) {
+        for (t[p += n] = value; p > 1; p >>= 1)
+            t[p >> 1] = t[p] + t[p ^ 1];
+    }
+
+    // Query sum on interval [l, r]
+    int query(int l, int r) {  // sum on [l, r]
+        int res = 0;
+        for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
+            if (l & 1) res += t[l++];     // l is a right child
+            if (!(r & 1)) res += t[r--];  // r is a left child
+        }
+        return res;
+    }
+};
+
 void solve() {
-    int n;
-    cin >> n;
+    int n, q;
+    cin >> n >> q;
     vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
+    for (auto& it : arr) cin >> it;
+    vi diff(n);
+    diff[0] = arr[0];
+    for (int i = 1; i < n; i++) {
+        diff[i] = arr[i] - arr[i - 1];
     }
-    for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
-    }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
-        }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
+    SegmentTree ST(diff);
+    while (q--) {
+        int q1;
+        cin >> q1;
+        if (q1 == 1) {
+            int a, b, v;
+            cin >> a >> b >> v;
+            a--;
+            int vala = ST.query(a, a);
+            if (b != n) {
+                int valb = ST.query(b, b);
+                ST.modify(b, valb - v);
+            }
+            ST.modify(a, vala + v);
+        } else {
+            int p;
+            cin >> p;
+            cout << ST.query(0, p - 1) << nl;
         }
     }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }

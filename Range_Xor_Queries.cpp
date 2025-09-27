@@ -18,20 +18,20 @@ using namespace std;
 #define vch vector<char>
 #define int long long
 struct SegmentTree {
-    static const int N = 2e5;  // max array size
-    int n;                     // actual array size
-    int t[2 * N];              // tree storage
+    int n;  // actual array size            // tree storage
+    vi t;
 
     // Constructor - initializes with array
     SegmentTree(vector<int>& a) {
         n = a.size();
+        t.resize(2 * n);
         build(a);
     }
 
     // Constructor - initializes with size (all zeros)
     SegmentTree(int size) {
         n = size;
-        fill(t, t + 2 * n, 0);
+        t.assign(2 * n, 0);
     }
 
     // Build the segment tree from array
@@ -40,26 +40,25 @@ struct SegmentTree {
         for (int i = 0; i < n; i++) t[i + n] = a[i];
 
         // Build internal nodes
-        for (int i = n - 1; i > 0; --i) t[i] = min(t[i << 1], t[i << 1 | 1]);
+        for (int i = n - 1; i > 0; --i) t[i] = t[i << 1] ^ t[i << 1 | 1];
     }
 
     // Modify value at position p to 'value'
     void modify(int p, int value) {
         for (t[p += n] = value; p > 1; p >>= 1)
-            t[p >> 1] = min(t[p], t[p ^ 1]);
+            t[p >> 1] = t[p] ^ t[p ^ 1];
     }
 
-    // Query sum on interval [l, r)
-    int query(int l, int r) {
-        int res = LLONG_MAX;
-        for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
-            if (l & 1) res = min(t[l++], res);
-            if (r & 1) res = min(res, t[--r]);
+    // Query sum on interval [l, r]
+    int query(int l, int r) {  // sum on [l, r]
+        int res = 0;
+        for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
+            if (l & 1) res ^= t[l++];     // l is a right child
+            if (!(r & 1)) res ^= t[r--];  // r is a left child
         }
         return res;
     }
 };
-
 void solve() {
     int n, q;
     cin >> n >> q;
@@ -67,9 +66,9 @@ void solve() {
     for (auto& it : arr) cin >> it;
     SegmentTree ST(arr);
     while (q--) {
-        int l, r;
-        cin >> l >> r;
-        cout << ST.query(l - 1, r) << nl;
+        int a, b;
+        cin >> a >> b;
+        cout << ST.query(a - 1, b - 1) << nl;
     }
 }
 signed main() {

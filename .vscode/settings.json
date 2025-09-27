@@ -12,6 +12,10 @@
     "vector": "cpp",
     "iomanip": "cpp",
     "random": "cpp",
-    "limits": "cpp"
+    "limits": "cpp",
+    "numeric": "cpp",
+    "array": "cpp",
+    "regex": "cpp",
+    "utility": "cpp"
   }
 }

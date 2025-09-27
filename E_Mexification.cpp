@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,19 +13,18 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
-#define vvi vector<vi>
-ll lcm(ll a, ll b) {
-    return (a / __gcd(a, b)) * b;
-}
+using vpp = vector<pair<T1, T2>>;
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -115,39 +114,69 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n;
-    cin >> n;
+    int n, k;
+    cin >> n >> k;
     vi arr(n);
-    vvi adj(n + 1);
-    vi answer(n, -1);
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        if (adj[arr[i]].empty())
-            adj[arr[i]].push_back(-1);
-        adj[arr[i]].push_back(i);
+    vi mpp(n + 1);
+    set<int> stt;
+    for (auto &it : arr) {
+        cin >> it;
+        mpp[it]++;
     }
-    for (int i = 1; i <= n; i++) {
-        if (adj[i].size()) adj[i].push_back(n);
+    for (int i = 0; i <= n + 1; i++) {
+        stt.insert(i);
     }
-    // for (int i = 1; i <= n; i++) {
-    //     cout << i << " : ";
-    //     for (auto &it : adj[i]) cout << it << " ";
-    //     cout << nl;
-    // }
-    for (int i = 1; i <= n; i++) {
-        int curr = -1;
-        for (int j = 0; j + 1 < adj[i].size(); j++) {
-            curr = max(curr, adj[i][j + 1] - adj[i][j]);
-        }
-        curr--;
-        // cout << i << " : " << curr << nl;
-        while (curr < n && curr >= 0 && answer[curr] == -1) {
-            answer[curr] = i;
-            curr++;
+    for (auto &it : arr) {
+        stt.erase(it);
+    }
+    int mex = *stt.begin();
+    int adder = !(k % 2);
+    int mini = mex;
+    for (int i = mex; i >= 0; i--) {
+        if (mpp[i] > 1) {
+            mini = i;
         }
     }
-    for (auto &it : answer) cout << it << " ";
-    cout << nl;
+    // cout << "mini is " << mini << " mex is " << mex << nl;
+    if (k == 1) {
+        int sum = 0;
+        for (auto &it : arr) {
+            if (it > mex || mpp[it] > 1)
+                sum += mex;
+            else
+                sum += it;
+        }
+        cout << sum << nl;
+        return;
+    } else if (mini == mex) {
+        int counter = 0;
+        for (int i = mex; i <= n; i++) {
+            if (mpp[i]) counter += mpp[i];
+        }
+        int sum = 0;
+        int adder = (!(k % 2)) && (counter > 1);
+        // cout << !(k % 2) << nl;
+        // cout << adder << nl;
+        for (auto &it : arr) {
+            if (it > mex)
+                sum += mex + adder;
+            else
+                sum += it;
+        }
+        cout << sum << nl;
+    } else {
+        int adder = k % 2;
+        // cout << "mini is " << mini << nl;
+        int sum = 0;
+        for (auto &it : arr) {
+            if (it >= mini) {
+                sum += (adder + mini);
+            } else {
+                sum += it;
+            }
+        }
+        cout << sum << nl;
+    }
 }
 signed main() {
     ios_base::sync_with_stdio(false);
@@ -158,5 +187,19 @@ signed main() {
     while (t--) {
         solve();
     }
+    // if (t == 5) {
+    //     while (t--) solve();
+    // }
+    // for (int i = 0; i < t; i++) {
+    //     int n, k;
+    //     cin >> n >> k;
+    //     vi arr(n);
+    //     for (auto &it : arr) cin >> it;
+    //     if (i == 21) {
+    //         cout << n << " " << k << nl;
+    //         for (auto &it : arr) cout << it << " ";
+    //         cout << nl;
+    //     }
+    // }
     return 0;
 }
