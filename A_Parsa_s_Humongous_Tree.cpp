@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,6 +13,8 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
@@ -64,7 +66,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -111,36 +113,40 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-void solve() {
-    int n, k;
-    cin >> n >> k;
-    map<int, int> mpp;
-    int left = 0, right = 0;
-    vi arr(n);
-    int answer = 0;
-    for (auto& it : arr) cin >> it;
-    while (right < n && left < n) {
-        if (right < n && mpp.size() <= k) {
-            mpp[arr[right++]]++;
-        }
-        if (left < n && mpp.size() > k) {
-            answer += n - (right - 1);
-            mpp[arr[left]]--;
-            // cout << left << " : " << right - 1 << nl;
-            if (mpp[arr[left]] == 0) mpp.erase(arr[left]);
-            left++;
-        }
+int n;
+void dfs(int node, int par, vector<vi> &adj, vector<vi> &inte, vector<vi> &dp) {
+    for (auto &it : adj[node]) {
+        if (it == par)
+            continue;
+        dfs(it, node, adj, inte, dp);
+        dp[node][0] += max(dp[it][0] + abs(inte[node][0] - inte[it][0]), dp[it][1] + abs(inte[node][0] - inte[it][1]));
+        dp[node][1] += max(dp[it][0] + abs(inte[node][1] - inte[it][0]), dp[it][1] + abs(inte[node][1] - inte[it][1]));
     }
-    // cout << answer << nl;
-    // cout << sumOfNaturalNumbers(n) << nl;
-    cout << sumOfNaturalNumbers(n) - answer << nl;
+}
+void solve() {
+    cin >> n;
+    vector<vi> adj(n + 1);
+    vector<vi> inte(n + 1, vi(2));
+    vector<vi> dp(n + 1, vi(2));
+    for (int i = 1; i <= n; i++) {
+        auto &it = inte[i];
+        cin >> it[0] >> it[1];
+    }
+    for (int i = 0; i < n - 1; i++) {
+        int u, v;
+        cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    dfs(1, -1, adj, inte, dp);
+    cout << max(dp[1][0], dp[1][1]) << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,6 +13,8 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
@@ -114,33 +116,26 @@ int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n, k;
     cin >> n >> k;
-    map<int, int> mpp;
-    int left = 0, right = 0;
-    vi arr(n);
-    int answer = 0;
-    for (auto& it : arr) cin >> it;
-    while (right < n && left < n) {
-        if (right < n && mpp.size() <= k) {
-            mpp[arr[right++]]++;
-        }
-        if (left < n && mpp.size() > k) {
-            answer += n - (right - 1);
-            mpp[arr[left]]--;
-            // cout << left << " : " << right - 1 << nl;
-            if (mpp[arr[left]] == 0) mpp.erase(arr[left]);
-            left++;
+    string s;
+    cin >> s;
+    int curr = 0;
+    int ans = 0;
+    s = '0' + s;
+    for (int i = 0; i <= n; i++) {
+        // cout << "curr " << curr << nl;
+        if (s[i] == '1') {
+            if (i > curr) ans++;
+            curr = i + k - 1;
         }
     }
-    // cout << answer << nl;
-    // cout << sumOfNaturalNumbers(n) << nl;
-    cout << sumOfNaturalNumbers(n) - answer << nl;
+    cout << ans << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

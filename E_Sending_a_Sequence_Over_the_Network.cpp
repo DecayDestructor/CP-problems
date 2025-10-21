@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,6 +13,8 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
@@ -64,7 +66,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -112,35 +114,32 @@ ll mod_div(ll a, ll b, ll m) {
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    map<int, int> mpp;
-    int left = 0, right = 0;
+    int n;
+    cin >> n;
     vi arr(n);
-    int answer = 0;
-    for (auto& it : arr) cin >> it;
-    while (right < n && left < n) {
-        if (right < n && mpp.size() <= k) {
-            mpp[arr[right++]]++;
+    for (auto &it : arr) cin >> it;
+    vi dp(n + 1, 0);  // if subarray [0---i] is valid
+    dp[0] = 1;
+    dp[1] = 0;  // 0..1 is always invalid
+    for (int i = 1; i <= n; i++) {
+        // if previous number had a valid segment, then we can start a new segment from this number
+        if (dp[i - 1] == 1 && i + arr[i - 1] <= n) {
+            // cout << "previous " << i - 1 << " is valid , so " << i + arr[i - 1] << "is also valid " << nl;
+            dp[i + arr[i - 1]] = 1;
         }
-        if (left < n && mpp.size() > k) {
-            answer += n - (right - 1);
-            mpp[arr[left]]--;
-            // cout << left << " : " << right - 1 << nl;
-            if (mpp[arr[left]] == 0) mpp.erase(arr[left]);
-            left++;
+        // this number be a valid segment length if dp[i - a[i]- 1] was true,
+        if (i - arr[i - 1] - 1 >= 0) {
+            dp[i] = dp[i - arr[i - 1] - 1] || dp[i];
         }
     }
-    // cout << answer << nl;
-    // cout << sumOfNaturalNumbers(n) << nl;
-    cout << sumOfNaturalNumbers(n) - answer << nl;
+    cout << (dp[n] ? "YES" : "NO") << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

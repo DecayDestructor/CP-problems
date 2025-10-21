@@ -66,7 +66,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -117,19 +117,29 @@ void solve() {
     int n;
     cin >> n;
     vi arr(n);
-    for (auto &it : arr) cin >> it;
+    for (auto& it : arr) cin >> it;
     map<int, int> mpp;
     int left = 0, right = 0;
-    while (right < n) {
-        while (mpp.size() < right - left)
+    int answer = 0;
+    while (left < n && right < n) {
+        if (mpp.size() != right - left + 1) {
+            mpp[arr[right]]++;
+            answer = max(answer, right - left + 1);
+            right++;
+        } else {
+            mpp[arr[left]]--;
+            if (mpp[arr[left]] == 0) mpp.erase(arr[left]);
+            left++;
+        }
     }
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    cin >> t;
+    // cin >> t;
     while (t--) {
         solve();
     }
