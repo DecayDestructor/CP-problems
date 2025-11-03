@@ -113,75 +113,32 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-class DisjointSet {
-    vector<int> rank, parent, size;
-    set<int> components;
-    int maxi = 1;
-
-   public:
-    DisjointSet(int n) {
-        rank.resize(n + 1, 0);
-        parent.resize(n + 1);
-        size.resize(n + 1);
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i;
-            size[i] = 1;
-            components.insert(i);
-        }
-    }
-
-    int findUPar(int node) {
-        if (node == parent[node])
-            return node;
-        return parent[node] = findUPar(parent[node]);
-    }
-
-    void unionByRank(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (rank[ulp_u] < rank[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-        } else if (rank[ulp_v] < rank[ulp_u]) {
-            parent[ulp_v] = ulp_u;
-        } else {
-            parent[ulp_v] = ulp_u;
-            rank[ulp_u]++;
-        }
-    }
-
-    void unionBySize(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (size[ulp_u] < size[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-            size[ulp_v] += size[ulp_u];
-        } else {
-            parent[ulp_v] = ulp_u;
-            size[ulp_u] += size[ulp_v];
-        }
-        maxi = max(size[ulp_u], max(size[ulp_v], maxi));
-    }
-    int getMaxComponent() {
-        return maxi;
-    }
-    int getTotalComponents() {
-        return (int)components.size();
-    }
-};
-int n, m;
 void solve() {
-    cin >> n >> m;
-    vector<vi> adj(n + 1);
-    DisjointSet DS(n);
-    int currsize = n;
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-        if (DS.findUPar(u) != DS.findUPar(v)) currsize--;
-        DS.unionBySize(u, v);
-        cout << currsize << " " << DS.getMaxComponent() << nl;
+    int n, k;
+    cin >> n >> k;
+    vi arr(n);
+    for (auto& it : arr) cin >> it;
+    vi temp = arr;
+    sort(all(temp));
+    int left = 0, right = temp.size() - 1;
+    vi ans;
+    int curr = 0;
+    int prev = 0;
+    while (left <= right) {
+        if ((arr[right] + curr) / k > prev) {
+            prev = arr[right] + curr;
+            prev = prev / k;
+            ans.push_back(arr[right++]);
+
+        } else {
+            curr += arr[left];
+            ans.push_back(arr[left++]);
+        }
+    }
+    int c = 0;
+    curr = 0;
+    for (auto& it : ans){
+        
     }
 }
 signed main() {
@@ -189,7 +146,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

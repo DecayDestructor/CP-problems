@@ -113,76 +113,28 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-class DisjointSet {
-    vector<int> rank, parent, size;
-    set<int> components;
-    int maxi = 1;
-
-   public:
-    DisjointSet(int n) {
-        rank.resize(n + 1, 0);
-        parent.resize(n + 1);
-        size.resize(n + 1);
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i;
-            size[i] = 1;
-            components.insert(i);
-        }
-    }
-
-    int findUPar(int node) {
-        if (node == parent[node])
-            return node;
-        return parent[node] = findUPar(parent[node]);
-    }
-
-    void unionByRank(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (rank[ulp_u] < rank[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-        } else if (rank[ulp_v] < rank[ulp_u]) {
-            parent[ulp_v] = ulp_u;
-        } else {
-            parent[ulp_v] = ulp_u;
-            rank[ulp_u]++;
-        }
-    }
-
-    void unionBySize(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (size[ulp_u] < size[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-            size[ulp_v] += size[ulp_u];
-        } else {
-            parent[ulp_v] = ulp_u;
-            size[ulp_u] += size[ulp_v];
-        }
-        maxi = max(size[ulp_u], max(size[ulp_v], maxi));
-    }
-    int getMaxComponent() {
-        return maxi;
-    }
-    int getTotalComponents() {
-        return (int)components.size();
-    }
-};
-int n, m;
+int N, M;
+vi dp;  // dp[i] = number of paths to i from its children
+vector<vi> adj;
+const int MOD = (int)(1e9) + 7;
+int dfs(int node) {
+    // cout << node << " : " << dp[node] << nl;
+    if (dp[node] != -1) return dp[node];
+    dp[node] = 0;
+    for (auto& it : adj[node]) dp[node] = mod_add(dfs(it), dp[node], MOD);
+    return dp[node] % MOD;
+}
 void solve() {
-    cin >> n >> m;
-    vector<vi> adj(n + 1);
-    DisjointSet DS(n);
-    int currsize = n;
-    for (int i = 0; i < m; i++) {
+    cin >> N >> M;
+    adj.resize(N + 1);
+    dp.assign(N + 1, -1);
+    for (int i = 0; i < M; i++) {
         int u, v;
         cin >> u >> v;
-        if (DS.findUPar(u) != DS.findUPar(v)) currsize--;
-        DS.unionBySize(u, v);
-        cout << currsize << " " << DS.getMaxComponent() << nl;
+        adj[v].push_back(u);
     }
+    dp[1] = 1;
+    cout << dfs(N) % MOD << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

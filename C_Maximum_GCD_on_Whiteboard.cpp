@@ -113,83 +113,34 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-class DisjointSet {
-    vector<int> rank, parent, size;
-    set<int> components;
-    int maxi = 1;
-
-   public:
-    DisjointSet(int n) {
-        rank.resize(n + 1, 0);
-        parent.resize(n + 1);
-        size.resize(n + 1);
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i;
-            size[i] = 1;
-            components.insert(i);
-        }
-    }
-
-    int findUPar(int node) {
-        if (node == parent[node])
-            return node;
-        return parent[node] = findUPar(parent[node]);
-    }
-
-    void unionByRank(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (rank[ulp_u] < rank[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-        } else if (rank[ulp_v] < rank[ulp_u]) {
-            parent[ulp_v] = ulp_u;
-        } else {
-            parent[ulp_v] = ulp_u;
-            rank[ulp_u]++;
-        }
-    }
-
-    void unionBySize(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (size[ulp_u] < size[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-            size[ulp_v] += size[ulp_u];
-        } else {
-            parent[ulp_v] = ulp_u;
-            size[ulp_u] += size[ulp_v];
-        }
-        maxi = max(size[ulp_u], max(size[ulp_v], maxi));
-    }
-    int getMaxComponent() {
-        return maxi;
-    }
-    int getTotalComponents() {
-        return (int)components.size();
-    }
-};
-int n, m;
 void solve() {
-    cin >> n >> m;
-    vector<vi> adj(n + 1);
-    DisjointSet DS(n);
-    int currsize = n;
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-        if (DS.findUPar(u) != DS.findUPar(v)) currsize--;
-        DS.unionBySize(u, v);
-        cout << currsize << " " << DS.getMaxComponent() << nl;
+    int n, k;
+    cin >> n >> k;
+    vi arr(n);
+    vi mpp(n + 1);
+    for (auto& it : arr) {
+        cin >> it;
+        mpp[it]++;
     }
+    int ans = 1;
+    for (int i = 1; i <= n; i++) mpp[i] += mpp[i - 1];
+    for (int i = 2; i <= n; i++) {
+        int valid = 0;
+        valid += (i <= n ? (mpp[i] - mpp[i - 1]) : 0);
+        valid += (2 * i <= n ? (mpp[2 * i] - mpp[2 * i - 1]) : 0);
+        valid += (3 * i <= n ? (mpp[3 * i] - mpp[3 * i - 1]) : 0);
+        valid += (4 * i <= n ? (mpp[n] - mpp[4 * i - 1]) : 0);
+        int invalid = n - valid;
+        if (invalid <= k) ans = i;
+    }
+    cout << ans << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

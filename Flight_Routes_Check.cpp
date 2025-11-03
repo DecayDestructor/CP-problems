@@ -113,75 +113,73 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-class DisjointSet {
-    vector<int> rank, parent, size;
-    set<int> components;
-    int maxi = 1;
-
-   public:
-    DisjointSet(int n) {
-        rank.resize(n + 1, 0);
-        parent.resize(n + 1);
-        size.resize(n + 1);
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i;
-            size[i] = 1;
-            components.insert(i);
-        }
-    }
-
-    int findUPar(int node) {
-        if (node == parent[node])
-            return node;
-        return parent[node] = findUPar(parent[node]);
-    }
-
-    void unionByRank(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (rank[ulp_u] < rank[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-        } else if (rank[ulp_v] < rank[ulp_u]) {
-            parent[ulp_v] = ulp_u;
-        } else {
-            parent[ulp_v] = ulp_u;
-            rank[ulp_u]++;
-        }
-    }
-
-    void unionBySize(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (size[ulp_u] < size[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-            size[ulp_v] += size[ulp_u];
-        } else {
-            parent[ulp_v] = ulp_u;
-            size[ulp_u] += size[ulp_v];
-        }
-        maxi = max(size[ulp_u], max(size[ulp_v], maxi));
-    }
-    int getMaxComponent() {
-        return maxi;
-    }
-    int getTotalComponents() {
-        return (int)components.size();
-    }
-};
+vi order, id, visited;
+vector<vi> adj, adj2;
 int n, m;
+int comp = 0;
+void dfs1(int node) {
+    visited[node] = 1;
+    for (auto& it : adj[node]) {
+        if (!visited[it]) dfs1(it);
+    }
+    order.push_back(node);
+}
+void dfs2(int node) {
+    visited[node] = 1;
+    for (auto& it : adj2[node]) {
+        if (!visited[it]) dfs2(it);
+    }
+    id[node] = comp;
+}
+bool dfs3(int node, int target) {
+    visited[node] = 1;
+    if (node == target) return true;
+    for (auto& it : adj[node]) {
+        if (!visited[it] && dfs3(it, target)) return true;
+    }
+    return false;
+}
 void solve() {
     cin >> n >> m;
-    vector<vi> adj(n + 1);
-    DisjointSet DS(n);
-    int currsize = n;
+    adj.resize(n + 1);
+    adj2.resize(n + 1);
     for (int i = 0; i < m; i++) {
         int u, v;
         cin >> u >> v;
-        if (DS.findUPar(u) != DS.findUPar(v)) currsize--;
-        DS.unionBySize(u, v);
-        cout << currsize << " " << DS.getMaxComponent() << nl;
+        adj[u].push_back(v);
+        adj2[v].push_back(u);
+    }
+    visited.resize(n + 1);
+    id.resize(n + 1);
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) dfs1(i);
+    }
+    visited.assign(n + 1, 0);
+    reverse(all(order));
+    for (auto& it : order) {
+        if (!visited[it]) {
+            comp++;
+            dfs2(it);
+        }
+    }
+    int a = id[1];
+    int b = a;
+    int j = -1;
+    for (int i = 2; i <= n; i++) {
+        if (b == a && id[i] != a) {
+            b = id[i];
+            j = i;
+        }
+    }
+    visited.assign(n + 1, 0);
+    if (a == b)
+        py;
+    else {
+        pn;
+        if (dfs3(1, j))
+            cout << j << " " << 1 << nl;
+        else
+            cout << 1 << " " << j << nl;
     }
 }
 signed main() {

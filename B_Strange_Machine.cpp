@@ -113,75 +113,36 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-class DisjointSet {
-    vector<int> rank, parent, size;
-    set<int> components;
-    int maxi = 1;
-
-   public:
-    DisjointSet(int n) {
-        rank.resize(n + 1, 0);
-        parent.resize(n + 1);
-        size.resize(n + 1);
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i;
-            size[i] = 1;
-            components.insert(i);
-        }
-    }
-
-    int findUPar(int node) {
-        if (node == parent[node])
-            return node;
-        return parent[node] = findUPar(parent[node]);
-    }
-
-    void unionByRank(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (rank[ulp_u] < rank[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-        } else if (rank[ulp_v] < rank[ulp_u]) {
-            parent[ulp_v] = ulp_u;
-        } else {
-            parent[ulp_v] = ulp_u;
-            rank[ulp_u]++;
-        }
-    }
-
-    void unionBySize(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (size[ulp_u] < size[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-            size[ulp_v] += size[ulp_u];
-        } else {
-            parent[ulp_v] = ulp_u;
-            size[ulp_u] += size[ulp_v];
-        }
-        maxi = max(size[ulp_u], max(size[ulp_v], maxi));
-    }
-    int getMaxComponent() {
-        return maxi;
-    }
-    int getTotalComponents() {
-        return (int)components.size();
-    }
-};
-int n, m;
 void solve() {
-    cin >> n >> m;
-    vector<vi> adj(n + 1);
-    DisjointSet DS(n);
-    int currsize = n;
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-        if (DS.findUPar(u) != DS.findUPar(v)) currsize--;
-        DS.unionBySize(u, v);
-        cout << currsize << " " << DS.getMaxComponent() << nl;
+    int n, q;
+    cin >> n >> q;
+    string s;
+    cin >> s;
+    bool b = false;
+    int sum = 0;
+    for (char& ch : s) {
+        if (ch == 'B') b = true;
+        sum += (ch == 'A');
+    }
+    while (q--) {
+        int x;
+        cin >> x;
+        int ans = 0;
+        if (b) {
+            int curr = 0;
+            while (x) {
+                // cout << curr << " " << x << nl;
+                if (s[curr] == 'A')
+                    x--;
+                else
+                    x = x / 2;
+                curr++;
+                ans++;
+                curr = curr % n;
+            }
+            cout << ans << nl;
+        } else
+            cout << x << nl;
     }
 }
 signed main() {
@@ -189,7 +150,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

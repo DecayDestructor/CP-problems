@@ -2,7 +2,7 @@
 using namespace std;
 
 #define nl '\n'
-#define loop(s, n) for (ll i = s; i < n; i++)
+#define loop(s, n, inc) for (ll i = s; i < n; i += inc)
 #define all(a) a.begin(), a.end()
 #define py cout << "YES" << nl
 #define pn cout << "NO" << nl
@@ -13,6 +13,8 @@ using namespace std;
 #define vi vector<int>
 #define vvll vector<vector<ll>>
 #define vvch vector<vector<char>>
+#define vvi vector<vi>
+#define pi pair<int, int>
 #define vch vector<char>
 template <typename T1, typename T2>
 #define int long long
@@ -21,9 +23,8 @@ ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
-template <typename T>
-vector<T> factorization(int n) {
-    vector<T> factors;
+vector<int> factorization(int n) {
+    vector<int> factors;
     for (int i = 1; i * i <= n; i++) {
         if (n % i == 0) {
             factors.push_back(i);
@@ -65,7 +66,7 @@ ll sumOfNaturalNumbers(ll n) {
     return (1LL * n * (n + 1)) / 2;  // Formula to calculate the sum
 }
 // DFS Traversal Validation
-bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll> &visited) {
+bool isValidDfsTraversal(ll row, ll col, ll m, ll n, vector<vll>& visited) {
     return row < n && col < m && row >= 0 && col >= 0 && !visited[row][col];
 }
 // Binary Exponentiation
@@ -112,40 +113,48 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+int n, m;
+vi dijkstra(vector<vector<vi>>& adj, int s) {
+    vi distance(n + 1, 1e16);
+    set<vi> stt;
+    distance[s] = 0;
+    stt.insert({0, s});
+    while (stt.size()) {
+        auto it = *stt.begin();
+        int d = it[0];
+        int u = it[1];
+        stt.erase(stt.begin());
+        for (auto& it : adj[u]) {
+            if (distance[it[0]] > d + it[1]) {
+                stt.erase({distance[it[0]], it[0]});
+                distance[it[0]] = d + it[1];
+                stt.insert({distance[it[0]], it[0]});
+            }
+        }
+    }
+    return distance;
+}
 void solve() {
-    int n, m;
     cin >> n >> m;
-    vector<vector<pair<int, int>>> adj(n + 1);
+    vector<vector<vi>> adj(n + 1);
+    vector<vector<vi>> reverseAdj(n + 1);
     for (int i = 0; i < m; i++) {
         int u, v, d;
         cin >> u >> v >> d;
         adj[u].push_back({v, d});
+        reverseAdj[v].push_back({u, d});
     }
-    vi d(n + 1, 1e16);
-    vi p(n + 1, -1);
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-    pq.push({0, 1});
-    d[1] = 0;
-    p[1] = 1;
-    while (!pq.empty()) {
-        int node = pq.top().second;
-        int dist = pq.top().first;
-        pq.pop();
-        for (auto &it : adj[node]) {
-            if (d[node] + it.second < d[it.first]) {
-                p[it.first] = node;
-                d[it.first] = d[node] + it.second;
-                pq.push({d[it.first], it.first});
-            }
+    vi distfront = dijkstra(adj, 1);
+    vi distback = dijkstra(reverseAdj, n);
+    int answer = 1e16;
+    for (int i = 1; i <= n; i++) {
+        for (auto& it : adj[i]) {
+            int u = i, v = it[0];
+            // consider u,v is halved
+            answer = min(answer, distfront[u] + distback[v] + it[1] / 2);
         }
     }
-    int index = n;
-    int maxi = 0;
-    while (p[index] != index) {
-        maxi = max(maxi, d[index] - d[p[index]]);
-        index = p[index];
-    }
-    cout << d[n] - ceil_div(maxi, 2) << nl;
+    cout << answer << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);

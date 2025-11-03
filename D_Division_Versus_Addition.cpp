@@ -113,75 +113,53 @@ ll mod_div(ll a, ll b, ll m) {
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
-class DisjointSet {
-    vector<int> rank, parent, size;
-    set<int> components;
-    int maxi = 1;
+int setBitNumber(int n) {
+    if (n == 0)
+        return 0;
 
-   public:
-    DisjointSet(int n) {
-        rank.resize(n + 1, 0);
-        parent.resize(n + 1);
-        size.resize(n + 1);
-        for (int i = 0; i <= n; i++) {
-            parent[i] = i;
-            size[i] = 1;
-            components.insert(i);
-        }
+    int msb = 0;
+    n = n / 2;
+    while (n != 0) {
+        n = n / 2;
+        msb++;
     }
 
-    int findUPar(int node) {
-        if (node == parent[node])
-            return node;
-        return parent[node] = findUPar(parent[node]);
-    }
-
-    void unionByRank(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (rank[ulp_u] < rank[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-        } else if (rank[ulp_v] < rank[ulp_u]) {
-            parent[ulp_v] = ulp_u;
-        } else {
-            parent[ulp_v] = ulp_u;
-            rank[ulp_u]++;
-        }
-    }
-
-    void unionBySize(int u, int v) {
-        int ulp_u = findUPar(u);
-        int ulp_v = findUPar(v);
-        if (ulp_u == ulp_v) return;
-        if (size[ulp_u] < size[ulp_v]) {
-            parent[ulp_u] = ulp_v;
-            size[ulp_v] += size[ulp_u];
-        } else {
-            parent[ulp_v] = ulp_u;
-            size[ulp_u] += size[ulp_v];
-        }
-        maxi = max(size[ulp_u], max(size[ulp_v], maxi));
-    }
-    int getMaxComponent() {
-        return maxi;
-    }
-    int getTotalComponents() {
-        return (int)components.size();
-    }
-};
-int n, m;
+    return msb + 1;
+}
+int powof2(int x) {
+    return !(x & x - 1);
+}
 void solve() {
-    cin >> n >> m;
-    vector<vi> adj(n + 1);
-    DisjointSet DS(n);
-    int currsize = n;
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-        if (DS.findUPar(u) != DS.findUPar(v)) currsize--;
-        DS.unionBySize(u, v);
-        cout << currsize << " " << DS.getMaxComponent() << nl;
+    int n, q;
+    cin >> n >> q;
+    vi arr(n);
+    vi pre(n + 1);
+    vi valid(n + 1);
+    vi minivalid(n + 1);
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+        pre[i + 1] = pre[i] + setBitNumber(arr[i]);
+        valid[i + 1] = valid[i];
+        minivalid[i + 1] = minivalid[i];
+        if (powof2(arr[i])) {
+            valid[i + 1] = valid[i] + 1;
+        } else if (powof2(arr[i] - 1)) {
+            minivalid[i + 1] = minivalid[i] + 1;
+        }
+    }
+    // for (auto& it : pre) cout << it << " ";
+    // cout << nl;
+    // for (auto& it : valid) cout << it << " ";
+    // cout << nl;
+    // for (auto& it : minivalid) cout << it << " ";
+    // cout << nl;
+    while (q--) {
+        int l, r;
+        cin >> l >> r;
+        int base = pre[r] - pre[l - 1];
+        int offset = valid[r] - valid[l - 1];
+        offset += ceil_div(minivalid[r] - minivalid[l - 1], 2);
+        cout << base - offset << nl;
     }
 }
 signed main() {
@@ -189,7 +167,7 @@ signed main() {
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }
