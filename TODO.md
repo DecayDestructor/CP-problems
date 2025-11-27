@@ -1,0 +1,8 @@
+- [ ] Create Fuzzy_Controller.cpp file
+- [ ] Implement trapezoidal membership function
+- [ ] Define fuzzy sets for temperature (Cold, Warm, Hot)
+- [ ] Define fuzzy sets for power adjustment (Increase, Hold, Decrease)
+- [ ] Implement fuzzification function
+- [ ] Implement inference mechanism (apply rules)
+- [ ] Implement defuzzification (center of gravity)
+- [ ] Add main function to test with sample temperatures
