@@ -19,7 +19,7 @@ using namespace std;
 template <typename T1, typename T2>
 #define int long long
 using vpp = vector<pair<T1, T2>>;
-
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -112,60 +112,64 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-const int MOD = 1e9 + 7;
-ll lcm(ll a, ll b) {
-    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
-}
-
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+int fact[(int)2e5 + 11];
+int inv_fact[(int)2e5 + 11];
+const int MOD = (int)1e9 + 7;
+void precomp() {
+    fact[0] = 1;
+    fact[1] = 1;
+    for (int i = 2; i <= 2e5 + 10; i++) {
+        fact[i] = mod_mul(i, fact[i - 1], MOD);
+    }
+    inv_fact[(int)2e5 + 10] = mod_div(1, fact[(int)2e5 + 10], MOD);
+    for (int i = 2e5 + 9; i >= 0; i--) {
+        inv_fact[i] = mod_mul(inv_fact[i + 1], i + 1, MOD);
+    }
+}
 void solve() {
-    int n;
-    cin >> n;
-    vi arr(n + 1);
-    // int answer = 1;
-    vi primef(n + 1, 0);
-    for (int i = 1; i <= n; i++) cin >> arr[i];
-    vi visited(n + 1);
-    vi ans;
-    for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            int count = 0;
-            int curr = i;
-            do {
-                visited[curr] = 1;
-                count++;
-                curr = arr[curr];
-            } while (i != curr);
-            ans.push_back(count);
-        }
+    int n, m;
+    cin >> n >> m;
+    map<int, int> mpp;
+    vi arr;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        mpp[x]++;
+        if (mpp[x] == 1) arr.push_back(x);
     }
-    vector<vi> temp;
-    for (auto& it : ans) {
-        for (int i = 2; i * i <= it; i++) {
-            int counter = 0;
-            while (it % i == 0) {
-                counter++;
-                it = it / i;
+    sort(all(arr));
+    int n1 = arr.size();
+    vi pre(n1 + 1, 1);
+    for (int i = 0; i < n1; i++) {
+        pre[i + 1] = mod_mul(pre[i], mpp[arr[i]], MOD);
+    }
+    int ans = 0;
+    int left = 0, right = 0;
+    while (right < n1) {
+        int maxi = arr[left] + m - 1;
+        if (arr[right] > maxi) {
+            if (right - left == m) {
+                ans = mod_add(ans, mod_div(pre[right], pre[left], MOD), MOD);
+                left++;
+            } else {
+                left = right;
             }
-            if (counter > 0) temp.push_back({counter, i});
+        } else {
+            if (right < n1 && arr[right] <= maxi) {
+                right++;
+            }
         }
-        if (it > 1) temp.push_back({1, it});
     }
-    for (auto& it : temp) {
-        primef[it[1]] = max(primef[it[1]], it[0]);
-    }
-    int req = 1;
-    for (int i = 2; i <= n; i++) {
-        req = mod_mul(req, binpow(i, primef[i], MOD), MOD);
-    }
-    cout << req << nl;
+    if (right - left == m) ans = mod_add(ans, mod_div(pre[right], pre[left], MOD), MOD);
+    cout << ans << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

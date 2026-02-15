@@ -19,7 +19,7 @@ using namespace std;
 template <typename T1, typename T2>
 #define int long long
 using vpp = vector<pair<T1, T2>>;
-
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -112,60 +112,57 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-const int MOD = 1e9 + 7;
-ll lcm(ll a, ll b) {
-    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
-}
-
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n;
     cin >> n;
-    vi arr(n + 1);
-    // int answer = 1;
-    vi primef(n + 1, 0);
-    for (int i = 1; i <= n; i++) cin >> arr[i];
-    vi visited(n + 1);
-    vi ans;
-    for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            int count = 0;
-            int curr = i;
-            do {
-                visited[curr] = 1;
-                count++;
-                curr = arr[curr];
-            } while (i != curr);
-            ans.push_back(count);
-        }
+    vi arr(n);
+    priority_queue<int> odd, even;
+    for (auto& it : arr) {
+        cin >> it;
+        if (it % 2)
+            odd.push(it);
+        else
+            even.push(it);
     }
-    vector<vi> temp;
-    for (auto& it : ans) {
-        for (int i = 2; i * i <= it; i++) {
-            int counter = 0;
-            while (it % i == 0) {
-                counter++;
-                it = it / i;
+    vi ans(n + 1);
+    if (odd.empty()) {
+        for (int i = 1; i <= n; i++) cout << 0 << " ";
+        cout << nl;
+        return;
+    } else {
+        ans[1] = odd.top();
+        odd.pop();
+    }
+    int i = 2;
+    int c = (int)even.size() + 1;
+    while (!even.empty()) {
+        ans[i] = ans[i - 1] + even.top();
+        even.pop();
+        i++;
+    }
+    while (i <= n) {
+        int rem = i - c;
+        if (rem % 2) {
+            if (odd.size() <= rem * 2)
+                ans[i] = 0;
+            else {
+                if (rem * 2)
             }
-            if (counter > 0) temp.push_back({counter, i});
+        } else {
+            ans[i] = ans[c];
         }
-        if (it > 1) temp.push_back({1, it});
     }
-    for (auto& it : temp) {
-        primef[it[1]] = max(primef[it[1]], it[0]);
-    }
-    int req = 1;
-    for (int i = 2; i <= n; i++) {
-        req = mod_mul(req, binpow(i, primef[i], MOD), MOD);
-    }
-    cout << req << nl;
+    cout << "answer " << nl;
+    for (auto& it : ans) cout << it << " ";
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

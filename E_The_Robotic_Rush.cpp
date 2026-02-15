@@ -16,10 +16,8 @@ using namespace std;
 #define vvi vector<vi>
 #define pi pair<int, int>
 #define vch vector<char>
-template <typename T1, typename T2>
 #define int long long
-using vpp = vector<pair<T1, T2>>;
-
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -112,61 +110,78 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-const int MOD = 1e9 + 7;
-ll lcm(ll a, ll b) {
-    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
-}
-
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n;
-    cin >> n;
-    vi arr(n + 1);
-    // int answer = 1;
-    vi primef(n + 1, 0);
-    for (int i = 1; i <= n; i++) cin >> arr[i];
-    vi visited(n + 1);
-    vi ans;
-    for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            int count = 0;
-            int curr = i;
-            do {
-                visited[curr] = 1;
-                count++;
-                curr = arr[curr];
-            } while (i != curr);
-            ans.push_back(count);
+    int n, m, k;
+    cin >> n >> m >> k;
+    vi rob(n), mines(m);
+    string str;
+    for (auto& it : rob) {
+        cin >> it;
+    }
+    for (auto& it : mines) cin >> it;
+    cin >> str;
+    sort(all(mines));
+    map<int, pi> mpp;
+    set<pair<int, int>, greater<pair<int, int>>> left;
+    set<pair<int, int>> right;
+
+    for (auto& it : rob) {
+        auto beg = lower_bound(all(mines), it);
+        auto aft = upper_bound(all(mines), it);
+        if (beg == mines.begin()) {
+            mpp[it].first = -1e9;
+        } else {
+            mpp[it].first = *prev(beg) - it;
         }
+        if (aft == mines.end()) {
+            mpp[it].second = 1e9;
+        } else
+            mpp[it].second = *aft - it;
+        left.insert({mpp[it].first, it});
+        right.insert({mpp[it].second, it});
     }
-    vector<vi> temp;
-    for (auto& it : ans) {
-        for (int i = 2; i * i <= it; i++) {
-            int counter = 0;
-            while (it % i == 0) {
-                counter++;
-                it = it / i;
-            }
-            if (counter > 0) temp.push_back({counter, i});
+    int ans = 0;
+    int currmax = 0, currmin = 0;
+    int curr = 0;
+    for (auto& ch : str) {
+        if (ch == 'R')
+            curr++;
+        else
+            curr--;
+        currmax = max(currmax, curr);
+        currmin = min(currmin, curr);
+        // check if it crossed any right mines
+        while (!right.empty()) {
+            pi beg = *right.begin();
+            if (beg.first > currmax) break;
+            ans++;
+            pi bef = {mpp[beg.second].first, beg.second};
+            left.erase(bef);
+            right.erase(beg);
         }
-        if (it > 1) temp.push_back({1, it});
+        // check if it crossed any left mines
+        while (!left.empty()) {
+            pi beg = *left.begin();
+            if (beg.first < currmin) break;
+            ans++;
+            pi bef = {mpp[beg.second].second, beg.second};
+            right.erase(bef);
+            left.erase(beg);
+        }
+        cout << n - ans << " ";
     }
-    for (auto& it : temp) {
-        primef[it[1]] = max(primef[it[1]], it[0]);
-    }
-    int req = 1;
-    for (int i = 2; i <= n; i++) {
-        req = mod_mul(req, binpow(i, primef[i], MOD), MOD);
-    }
-    cout << req << nl;
+    cout << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
+        // cout << "answer " << nl;
+        ;
         solve();
     }
     return 0;

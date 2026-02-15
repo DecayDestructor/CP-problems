@@ -16,10 +16,8 @@ using namespace std;
 #define vvi vector<vi>
 #define pi pair<int, int>
 #define vch vector<char>
-template <typename T1, typename T2>
 #define int long long
-using vpp = vector<pair<T1, T2>>;
-
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -112,62 +110,68 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-const int MOD = 1e9 + 7;
-ll lcm(ll a, ll b) {
-    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
-}
-
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n;
     cin >> n;
-    vi arr(n + 1);
-    // int answer = 1;
-    vi primef(n + 1, 0);
-    for (int i = 1; i <= n; i++) cin >> arr[i];
-    vi visited(n + 1);
-    vi ans;
-    for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            int count = 0;
-            int curr = i;
-            do {
-                visited[curr] = 1;
-                count++;
-                curr = arr[curr];
-            } while (i != curr);
-            ans.push_back(count);
-        }
+    vi arr(n);
+    for (auto& it : arr) cin >> it;
+    vi temp = arr;
+    int mini = *min_element(all(arr));
+    int maxi = *max_element(all(arr));
+    sort(all(temp));
+    if (temp == arr) {
+        cout << -1 << nl;
+        return;
     }
-    vector<vi> temp;
-    for (auto& it : ans) {
-        for (int i = 2; i * i <= it; i++) {
-            int counter = 0;
-            while (it % i == 0) {
-                counter++;
-                it = it / i;
+    auto helper = [&](int m) -> bool {
+        for (int i = 0; i < n; i++) {
+            if (arr[i] == temp[i])
+                continue;
+            int it = arr[i];
+            if (it - m < mini && it + m > maxi) {
+                // cout << "Stopping at " << it << nl;
+                return false;
             }
-            if (counter > 0) temp.push_back({counter, i});
         }
-        if (it > 1) temp.push_back({1, it});
+        return true;
+    };
+    int l = 1, r = 1e14;
+    int ans = -1;
+    while (l <= r) {
+        int m = l + (r - l) / 2;
+        // cout << "checking for " << m << nl;
+        if (helper(m)) {
+            ans = max(ans, m);
+            l = m + 1;
+        } else
+            r = m - 1;
     }
-    for (auto& it : temp) {
-        primef[it[1]] = max(primef[it[1]], it[0]);
-    }
-    int req = 1;
-    for (int i = 2; i <= n; i++) {
-        req = mod_mul(req, binpow(i, primef[i], MOD), MOD);
-    }
-    cout << req << nl;
+    cout << ans << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
+    // if (t == 5)
     while (t--) {
+        // cout << "answer ";
         solve();
     }
+    // else {
+    //     for (int i = 0; i < t; i++) {
+    //         int n;
+    //         cin >> n;
+    //         vi arr(n);
+    //         for (auto& it : arr) cin >> it;
+    //         if (i == 231) {
+    //             cout << n << nl;
+    //             for (auto& it : arr) cout << it << " ";
+    //             cout << nl;
+    //         }
+    //     }
+    // }
     return 0;
 }

@@ -19,7 +19,7 @@ using namespace std;
 template <typename T1, typename T2>
 #define int long long
 using vpp = vector<pair<T1, T2>>;
-
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -112,60 +112,50 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-const int MOD = 1e9 + 7;
-ll lcm(ll a, ll b) {
-    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
-}
-
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
     int n;
     cin >> n;
-    vi arr(n + 1);
-    // int answer = 1;
-    vi primef(n + 1, 0);
-    for (int i = 1; i <= n; i++) cin >> arr[i];
-    vi visited(n + 1);
-    vi ans;
-    for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            int count = 0;
-            int curr = i;
-            do {
-                visited[curr] = 1;
-                count++;
-                curr = arr[curr];
-            } while (i != curr);
-            ans.push_back(count);
-        }
+    vi r1(n);
+    vi r2(n);
+    for (auto& it : r1) cin >> it;
+    for (auto& it : r2) cin >> it;
+    vi pre_min(n), pre_max(n), suff_min(n), suff_max(n);
+    pre_min[0] = r1[0];
+    pre_max[0] = r1[0];
+    suff_min[n - 1] = r2[n - 1];
+    suff_max[n - 1] = r2[n - 1];
+    for (int i = 1; i < n; i++) {
+        pre_min[i] = min(pre_min[i - 1], r1[i]);
+        pre_max[i] = max(pre_max[i - 1], r1[i]);
     }
-    vector<vi> temp;
+    for (int i = n - 2; i >= 0; i--) {
+        suff_min[i] = min(suff_min[i + 1], r2[i]);
+        suff_max[i] = max(suff_max[i + 1], r2[i]);
+    }
+    vector<vi> intervals;
+    for (int i = 0; i < n; i++) {
+        intervals.push_back({min(pre_min[i], suff_min[i]), max(pre_max[i], suff_max[i])});
+    }
+    vi ans(2 * n, 2 * n);
+    for (auto& it : intervals) {
+        ans[it[0] - 1] = min(ans[it[0] - 1], it[1] - 1);
+    }
+    for (int i = 2 * n - 2; i >= 0; i--) {
+        ans[i] = min(ans[i], ans[i + 1]);
+    }
+    int answ = 0;
     for (auto& it : ans) {
-        for (int i = 2; i * i <= it; i++) {
-            int counter = 0;
-            while (it % i == 0) {
-                counter++;
-                it = it / i;
-            }
-            if (counter > 0) temp.push_back({counter, i});
-        }
-        if (it > 1) temp.push_back({1, it});
+        answ += (2 * n - it);
     }
-    for (auto& it : temp) {
-        primef[it[1]] = max(primef[it[1]], it[0]);
-    }
-    int req = 1;
-    for (int i = 2; i <= n; i++) {
-        req = mod_mul(req, binpow(i, primef[i], MOD), MOD);
-    }
-    cout << req << nl;
+    cout << answ << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }

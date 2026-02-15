@@ -19,7 +19,7 @@ using namespace std;
 template <typename T1, typename T2>
 #define int long long
 using vpp = vector<pair<T1, T2>>;
-
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -112,62 +112,40 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-const int MOD = 1e9 + 7;
-ll lcm(ll a, ll b) {
-    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
-}
-
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
 void solve() {
-    int n;
-    cin >> n;
-    vi arr(n + 1);
-    // int answer = 1;
-    vi primef(n + 1, 0);
-    for (int i = 1; i <= n; i++) cin >> arr[i];
-    vi visited(n + 1);
-    vi ans;
-    for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            int count = 0;
-            int curr = i;
-            do {
-                visited[curr] = 1;
-                count++;
-                curr = arr[curr];
-            } while (i != curr);
-            ans.push_back(count);
-        }
+    int n, x;
+    cin >> n >> x;
+    vector<int> a(n), b(n), c(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i] >> b[i] >> c[i];
     }
-    vector<vi> temp;
-    for (auto& it : ans) {
-        for (int i = 2; i * i <= it; i++) {
-            int counter = 0;
-            while (it % i == 0) {
-                counter++;
-                it = it / i;
-            }
-            if (counter > 0) temp.push_back({counter, i});
-        }
-        if (it > 1) temp.push_back({1, it});
+    int start = 0;
+    int mx = -1e9;
+    for (int i = 0; i < n; ++i) {
+        mx = max(mx, a[i] * b[i] - c[i]);
+        start += a[i] * (b[i] - 1);
     }
-    for (auto& it : temp) {
-        primef[it[1]] = max(primef[it[1]], it[0]);
+    x -= start;
+    if (x <= 0) {
+        cout << 0;
+        return;
     }
-    int req = 1;
-    for (int i = 2; i <= n; i++) {
-        req = mod_mul(req, binpow(i, primef[i], MOD), MOD);
+    if (mx <= 0) {
+        cout << -1;
+        return;
     }
-    cout << req << nl;
+    cout << (x + mx - 1) / mx;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
+        cout << nl;
     }
     return 0;
 }

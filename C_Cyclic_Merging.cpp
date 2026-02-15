@@ -19,7 +19,7 @@ using namespace std;
 template <typename T1, typename T2>
 #define int long long
 using vpp = vector<pair<T1, T2>>;
-
+ll lcm(ll a, ll b) { return (a / __gcd(a, b)) * b; }
 bool RSORT(ll a, ll b) {
     return a > b;
 }
@@ -112,60 +112,106 @@ ll mod_div(ll a, ll b, ll m) {
     b = b % m;
     return (mod_mul(a, mminvprime(b, m), m) + m) % m;
 }
-const int MOD = 1e9 + 7;
-ll lcm(ll a, ll b) {
-    return mod_mul(mod_div(a, __gcd(a, b), MOD), b, MOD);
-}
-
 int ceil_div(int a, int b) { return (a + b - 1) / b; }
+#include <bits/stdc++.h>
+using namespace std;
+class DisjointSet {
+    vector<int> rank, parent, size;
+
+   public:
+    DisjointSet(int n) {
+        rank.resize(n + 1, 0);
+        parent.resize(n + 1);
+        size.resize(n + 1);
+        for (int i = 0; i <= n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    }
+
+    int findUPar(int node) {
+        if (node == parent[node])
+            return node;
+        return parent[node] = findUPar(parent[node]);
+    }
+
+    void unionByRank(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if (ulp_u == ulp_v) return;
+        if (rank[ulp_u] < rank[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+        } else if (rank[ulp_v] < rank[ulp_u]) {
+            parent[ulp_v] = ulp_u;
+        } else {
+            parent[ulp_v] = ulp_u;
+            rank[ulp_u]++;
+        }
+    }
+
+    void unionBySize(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if (ulp_u == ulp_v) return;
+        if (size[ulp_u] < size[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+            size[ulp_v] += size[ulp_u];
+        } else {
+            parent[ulp_v] = ulp_u;
+            size[ulp_u] += size[ulp_v];
+        }
+    }
+};
 void solve() {
     int n;
     cin >> n;
+    DisjointSet ds(n);
     vi arr(n + 1);
-    // int answer = 1;
-    vi primef(n + 1, 0);
-    for (int i = 1; i <= n; i++) cin >> arr[i];
-    vi visited(n + 1);
-    vi ans;
+    vi val(n + 1);
+    priority_queue<pi, vector<pi>, greater<pi>> pq;
     for (int i = 1; i <= n; i++) {
-        if (!visited[i]) {
-            int count = 0;
-            int curr = i;
-            do {
-                visited[curr] = 1;
-                count++;
-                curr = arr[curr];
-            } while (i != curr);
-            ans.push_back(count);
-        }
+        cin >> arr[i];
+        pq.push({arr[i], i});
+        val[i] = arr[i];
     }
-    vector<vi> temp;
-    for (auto& it : ans) {
-        for (int i = 2; i * i <= it; i++) {
-            int counter = 0;
-            while (it % i == 0) {
-                counter++;
-                it = it / i;
+    int cost = 0;
+    while (pq.size()) {
+        auto [node, index] = pq.top();
+        pq.pop();
+        int left = (index == 1 ? n : index - 1);
+        int right = (index == n ? 1 : index + 1);
+        int parleft = ds.findUPar(left);
+        int par = ds.findUPar(index);
+        // cout << index << " : " << val[par] << nl;
+        if (par != parleft) {
+            if (val[parleft] <= val[par]) {
+                // cout << "left merge " << nl;
+                // cout << "merging " << left << " : " << val[parleft] << nl;
+                ds.unionByRank(parleft, par);
+                val[parleft] = val[par];
+                cost += val[par];
             }
-            if (counter > 0) temp.push_back({counter, i});
         }
-        if (it > 1) temp.push_back({1, it});
+        int parright = ds.findUPar(right);
+        par = ds.findUPar(index);
+        if (par != parright) {
+            if (val[parright] <= val[par]) {
+                // cout << "right merge " << nl;
+                // cout << "merging " << right << " : " << val[parright] << nl;
+                ds.unionByRank(parright, par);
+                val[parright] = val[par];
+                cost += val[par];
+            }
+        }
     }
-    for (auto& it : temp) {
-        primef[it[1]] = max(primef[it[1]], it[0]);
-    }
-    int req = 1;
-    for (int i = 2; i <= n; i++) {
-        req = mod_mul(req, binpow(i, primef[i], MOD), MOD);
-    }
-    cout << req << nl;
+    cout << cost << nl;
 }
 signed main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     cout.tie(NULL);
     int t = 1;
-    // cin >> t;
+    cin >> t;
     while (t--) {
         solve();
     }
